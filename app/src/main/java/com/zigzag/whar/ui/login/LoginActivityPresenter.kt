@@ -8,13 +8,12 @@ import javax.inject.Inject
  */
 
 class LoginActivityPresenter @Inject constructor() : BasePresenter<LoginActivityContract.View>(), LoginActivityContract.Presenter  {
-
-    override fun attemptLogin(username: String, password: String) {
-
+    override fun onPresenterCreated() {
+        //view?.disableSubmitButton()
     }
 
-    override fun validate(username: String, password: String): Boolean {
-        return false
+    override fun requestCode(number: Number) {
+
     }
 
 }

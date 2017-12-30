@@ -16,18 +16,21 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
     private val lifecycleRegistry = LifecycleRegistry(this)
 
     protected lateinit var presenter: P
-
+    private var isPresenterCreated = false
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModel = ViewModelProviders.of(this).get(BaseViewModel<V,P>()::class.java)
         if (viewModel.presenter == null) {
             viewModel.presenter = initPresenter()
+            isPresenterCreated = true
         }
 
         presenter = viewModel.presenter as P
         presenter.attachLifecycle(lifecycle)
         presenter.attachView(this as V)
+        if (isPresenterCreated)
+            presenter.onPresenterCreated()
     }
 
     override fun getLifecycle(): LifecycleRegistry {
