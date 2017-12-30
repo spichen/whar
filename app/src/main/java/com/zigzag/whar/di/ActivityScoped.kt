@@ -1,12 +1,13 @@
 package com.zigzag.whar.di
 
-/**
- * Created by salah on 20/12/17.
- */
 
 import javax.inject.Scope
 
+/**
+ * Created by salah on 30/12/17.
+ */
+
 @MustBeDocumented
 @Scope
-@Retention(value = AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.RUNTIME)
 annotation class ActivityScoped

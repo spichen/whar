@@ -10,7 +10,6 @@ import org.mockito.Mockito.verify
  * Created by salah on 30/12/17.
  */
 class LoginActivityPresenterTest {
-    /*
     @Test
     fun checkIfUsernameAndPasswordIsValid() {
         val loginActivityPresenter = LoginActivityPresenter()
@@ -25,5 +24,5 @@ class LoginActivityPresenterTest {
         loginActivityPresenter.attemptLogin("s","a");
         verify(loginActivityView).showLoginError("not enough length")
     }
-*/
+
 }

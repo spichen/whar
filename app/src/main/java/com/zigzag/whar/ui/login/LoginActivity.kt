@@ -9,7 +9,7 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
 
     @Inject lateinit var p : LoginActivityPresenter
 
-    override fun initPresenter(): LoginActivityContract.Presenter = p
+    override fun initPresenter(): LoginActivityContract.Presenter = LoginActivityPresenter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

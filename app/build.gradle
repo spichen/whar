@@ -1,10 +1,6 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
-
-apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 26
@@ -21,14 +17,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-}
 
-kapt {
-    generateStubs = true
+    }
+
 }
 ext {
-    dagger_version = '2.11'
+    dagger_version = '2.14.1'
     arch_version = '1.0.0'
     jsr305Version = "3.0.1"
 }
@@ -60,3 +54,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
+
+apply plugin: 'kotlin-kapt'

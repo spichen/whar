@@ -4,6 +4,7 @@ package com.zigzag.whar.di
  * Created by salah on 30/12/17.
  */
 
+import com.zigzag.whar.MainActivity
 import com.zigzag.whar.ui.login.LoginActivity
 import com.zigzag.whar.ui.login.LoginActivityModule
 
@@ -15,6 +16,6 @@ abstract class ActivityBindingModule {
 
     @ActivityScoped
     @ContributesAndroidInjector(modules = arrayOf(LoginActivityModule::class))
-    internal abstract fun loginActivity(): LoginActivity
+    abstract fun loginActivity(): LoginActivity
 
 }
