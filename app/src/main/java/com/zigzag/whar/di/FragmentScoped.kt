@@ -7,6 +7,7 @@ package com.zigzag.whar.di
 import javax.inject.Scope
 
 @Scope
-@Retention
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(value = AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS,
+        AnnotationTarget.FILE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 annotation class FragmentScoped

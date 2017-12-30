@@ -15,7 +15,7 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
 
     private val lifecycleRegistry = LifecycleRegistry(this)
 
-    protected abstract var presenter: P
+    protected lateinit var presenter: P
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {

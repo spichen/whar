@@ -8,5 +8,5 @@ import javax.inject.Scope
 
 @MustBeDocumented
 @Scope
-@Retention
+@Retention(value = AnnotationRetention.RUNTIME)
 annotation class ActivityScoped
