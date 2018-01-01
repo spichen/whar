@@ -25,7 +25,8 @@ ext {
     dagger_version = '2.14.1'
     arch_version = '1.0.0'
     jsr305Version = "3.0.1"
-    anko_version ='0.10.4'
+    anko_version = '0.10.4'
+    firebase_version = '11.8.0'
 }
 
 dependencies {
@@ -58,6 +59,10 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
     implementation 'org.glassfish:javax.annotation:10.0-b28'
 
+    // firebase
+    implementation "com.google.firebase:firebase-core:$firebase_version"
+    implementation "com.google.firebase:firebase-auth:$firebase_version"
+
     compile "com.google.code.findbugs:jsr305:$jsr305Version"
 
     // test
@@ -68,3 +73,4 @@ dependencies {
 }
 
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'

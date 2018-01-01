@@ -1,7 +1,6 @@
 package com.zigzag.whar.ui.login
 
 import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.action.ViewActions.typeText
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.*
@@ -37,8 +36,6 @@ class LoginActivityTest {
 
     @Test
     fun checkIfCodeInputIsDisplayedWhenNumberSubmitClicked(){
-        onView(withId(R.id.et_number)).perform(typeText("9895940989"))
-        onView(withId(R.id.btn_submit)).perform(click())
-        onView(withId(R.id.et_code)).check(matches(isDisplayed()))
+
     }
 }

@@ -1,0 +1,18 @@
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="@dimen/country_spinner_inset"
+    android:insetTop="@dimen/country_spinner_inset"
+    android:insetBottom="@dimen/country_spinner_inset"
+    android:insetRight="@dimen/country_spinner_inset">
+    <selector>
+        <item android:state_checked="false" android:state_pressed="false">
+            <layer-list>
+                <item android:drawable="@drawable/textfield_activated_mtrl_alpha" />
+            </layer-list>
+        </item>
+        <item>
+            <layer-list>
+                <item android:drawable="@drawable/textfield_activated_mtrl_alpha" />
+            </layer-list>
+        </item>
+    </selector>
+</inset>

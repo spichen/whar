@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.support.annotation.CallSuper
 
 import dagger.android.support.DaggerAppCompatActivity
+import com.google.firebase.analytics.FirebaseAnalytics
+
+
 
 /**
  * Created by salah on 27/12/17.
@@ -13,6 +16,7 @@ import dagger.android.support.DaggerAppCompatActivity
 
 abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>> : DaggerAppCompatActivity(), BaseContract.View {
 
+    private var mFirebaseAnalytics: FirebaseAnalytics? = null
     private val lifecycleRegistry = LifecycleRegistry(this)
 
     protected lateinit var presenter: P
@@ -20,6 +24,7 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
         val viewModel = ViewModelProviders.of(this).get(BaseViewModel<V,P>()::class.java)
         if (viewModel.presenter == null) {
             viewModel.presenter = initPresenter()

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "32825608342",
+    "firebase_url": "https://whar-8eae2.firebaseio.com",
+    "project_id": "whar-8eae2",
+    "storage_bucket": "whar-8eae2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:32825608342:android:336fc6a4d5a6ce06",
+        "android_client_info": {
+          "package_name": "com.zigzag.whar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "32825608342-tfante45m0d233jicq4p3j89lhekdddr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zigzag.whar",
+            "certificate_hash": "1c569fb50b08a890cc8162d5c5ba9e81c58a9750"
+          }
+        },
+        {
+          "client_id": "32825608342-g7q48m2tvgjctumab1vfp1vefbf9rt83.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGaWQZu3aM_NThkzDN8SLS7szejTZt_8Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "32825608342-g7q48m2tvgjctumab1vfp1vefbf9rt83.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
