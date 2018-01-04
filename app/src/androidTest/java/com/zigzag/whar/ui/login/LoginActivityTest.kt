@@ -11,6 +11,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.hamcrest.CoreMatchers.not
 import org.junit.Rule
+import android.support.test.espresso.action.ViewActions.click
+import android.support.test.espresso.intent.Intents.intended
+import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import com.zigzag.whar.ui.dashboard.DashboardActivity
 
 /**
  * Created by salah on 30/12/17.
@@ -22,8 +26,9 @@ class LoginActivityTest {
     @Rule @JvmField
     val loginActivityTestRule: ActivityTestRule<LoginActivity> = ActivityTestRule(LoginActivity::class.java, true, true)
 
+
     @Test
-    fun checkIfSubmitButtonIsEnablingWhenNumberIsValid() {
+    public fun checkIfSubmitButtonIsEnablingWhenNumberIsValid() {
         onView(withId(R.id.et_number)).perform(typeText("9895"))
         onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
 
@@ -32,10 +37,14 @@ class LoginActivityTest {
 
         onView(withId(R.id.et_number)).perform(typeText("9895"))
         onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
+
     }
 
     @Test
-    fun checkIfCodeInputIsDisplayedWhenNumberSubmitClicked(){
-
+    public fun checkIfCodeInputViewIsDisplayedWhenCorrectNumberInputted() {
+        onView(withId(R.id.et_number)).perform(typeText("9895940989"))
+        onView(withId(R.id.btn_submit)).perform(click())
+        intended(hasComponent(DashboardActivity::class.java.name))
     }
+
 }

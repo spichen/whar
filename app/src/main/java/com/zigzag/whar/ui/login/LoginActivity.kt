@@ -1,7 +1,9 @@
 package com.zigzag.whar.ui.login
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.support.annotation.NonNull
+import android.support.annotation.Nullable
 import com.jakewharton.rxbinding2.widget.textChanges
 import com.zigzag.whar.R
 import com.zigzag.whar.arch.BaseActivity
@@ -14,12 +16,19 @@ import com.jakewharton.rxbinding2.view.clicks
 import android.telephony.TelephonyManager
 import com.jakewharton.rxbinding2.widget.editorActions
 import io.reactivex.Observable
+import android.view.ViewGroup
+import android.support.v4.view.PagerAdapter
+import android.view.View
+import com.zigzag.whar.ui.dashboard.DashboardActivity
 
 class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContract.Presenter>(), LoginActivityContract.View{
 
     @Inject lateinit var p : LoginActivityPresenter
 
-    override fun initPresenter(): LoginActivityContract.Presenter = LoginActivityPresenter()
+    val PAGE_PHONE_NUMBER = 0
+    val PAGE_CODE = 1
+
+    override fun initPresenter(): LoginActivityContract.Presenter = p
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,10 +38,12 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
     }
 
     private fun initViews() {
+        vp_container.adapter = phoneAuthSliderAdapter()
+
         val spinnerArrayAdapter = ArrayAdapter<String>(this, R.layout.country_spinner_item, resources.getStringArray(R.array.country_code))
         s_country_code.adapter = spinnerArrayAdapter
         spinnerArrayAdapter.setDropDownViewResource(R.layout.country_spinner_popup_item)
-        setDefaultCountryCode()
+        s_country_code.setSelection(getDefaultCountryPosition())
     }
 
     private fun initObservation() {
@@ -51,17 +62,43 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
                 }
     }
 
-    override fun setDefaultCountryCode() {
+    internal inner class phoneAuthSliderAdapter : PagerAdapter() {
+        override fun instantiateItem(collection: ViewGroup, position: Int): Any {
+            when (position) {
+                PAGE_PHONE_NUMBER -> return cl_number_input_container
+                PAGE_CODE -> return cl_code_input_container
+            }
+            return cl_number_input_container
+        }
+
+        override fun getCount(): Int {
+            return 2
+        }
+
+        override fun isViewFromObject(arg0: View, arg1: Any): Boolean {
+            return arg0 === arg1
+        }
+    }
+
+    override fun updateUItoInputCode() {
+        vp_container.currentItem = PAGE_CODE
+    }
+
+    override fun onVerified() {
+        startActivity(Intent(this@LoginActivity,DashboardActivity::class.java))
+    }
+
+    private fun getDefaultCountryPosition() : Int {
         val manager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
         val countryID = manager.simCountryIso.toUpperCase()
         val rl = this.resources.getStringArray(R.array.country_code)
         for (i in rl.indices) {
             val g = rl[i].split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             if (g[0].trim { it <= ' ' } == countryID.trim { it <= ' ' }) {
-                s_country_code.setSelection(i)
-                break
+                return i
             }
         }
+        return 0
     }
 
     override fun showError(error: String) {

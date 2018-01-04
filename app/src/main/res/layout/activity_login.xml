@@ -17,76 +17,114 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginTop="24dp"
+
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_logo">
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp">
+        <com.zigzag.whar.customviews.NonSwipeableViewPager
+            android:id="@+id/vp_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/tv_verify_your_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/cl_number_input_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/verify_your_number"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                app:fontFamily="sans-serif-bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginTop="8dp">
 
-            <android.support.v7.widget.AppCompatEditText
-                android:id="@+id/et_number"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:ems="10"
-                android:hint="@string/phone_number"
-                android:inputType="phone"
-                android:textSize="20sp"
-                app:backgroundTint="@android:color/white"
-                app:layout_constraintEnd_toEndOf="@+id/btn_submit"
-                app:layout_constraintStart_toEndOf="@+id/s_country_code"
-                app:layout_constraintTop_toBottomOf="@+id/tv_verify_your_number" />
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/tv_verify_your_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/verify_your_number"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    app:fontFamily="sans-serif-bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.v7.widget.AppCompatSpinner
-                android:id="@+id/s_country_code"
-                style="@style/CountrySpinnerStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:gravity="center_horizontal"
-                android:popupBackground="@android:color/white"
-                app:backgroundTint="@android:color/white"
-                app:layout_constraintBottom_toBottomOf="@+id/et_number"
-                app:layout_constraintStart_toStartOf="@+id/btn_submit" />
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/et_number"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:ems="10"
+                    android:hint="@string/phone_number"
+                    android:inputType="phone"
+                    android:textSize="20sp"
+                    app:backgroundTint="@android:color/white"
+                    app:layout_constraintEnd_toEndOf="@+id/btn_submit"
+                    app:layout_constraintStart_toEndOf="@+id/s_country_code"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_verify_your_number" />
 
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/btn_submit"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/s_country_code"
+                    style="@style/CountrySpinnerStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:gravity="center_horizontal"
+                    android:popupBackground="@android:color/white"
+                    app:backgroundTint="@android:color/white"
+                    app:layout_constraintBottom_toBottomOf="@+id/et_number"
+                    app:layout_constraintStart_toStartOf="@+id/btn_submit" />
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_submit"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/get_code"
+                    android:textColor="@color/colorPrimary"
+                    app:backgroundTint="@android:color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/et_number" />
+            </android.support.constraint.ConstraintLayout>
+
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/cl_code_input_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/get_code"
-                android:textColor="@color/colorPrimary"
-                app:backgroundTint="@android:color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/et_number" />
-        </android.support.constraint.ConstraintLayout>
+                android:layout_marginTop="8dp">
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/tv_enter_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/enter_code"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    app:fontFamily="sans-serif-bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </android.support.constraint.ConstraintLayout>
+        </com.zigzag.whar.customviews.NonSwipeableViewPager>
     </ScrollView>
 
     <ImageView

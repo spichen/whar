@@ -4,6 +4,9 @@ import org.junit.Test
 
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
+import io.reactivex.subscribers.TestSubscriber
+
+
 
 /**
  * Created by salah on 30/12/17.
@@ -17,5 +20,6 @@ class LoginActivityPresenterTest {
         loginActivityPresenter.view = loginActivityView
         verify(loginActivityView).disableSubmitButton()
     }
+
 
 }

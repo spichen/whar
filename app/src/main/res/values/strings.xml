@@ -3,4 +3,6 @@
     <string name="phone_number">Phone number</string>
     <string name="get_code">Get Code</string>
     <string name="verify_your_number">Verify your number</string>
+    <string name="verify">Verify</string>
+    <string name="enter_code">Enter code</string>
 </resources>

@@ -12,7 +12,8 @@ class LoginActivityContract {
         fun setSubmitButtonText(text: String)
         fun disableSubmitButton()
         fun enableSubmitButton()
-        fun setDefaultCountryCode()
+        fun updateUItoInputCode()
+        fun onVerified()
     }
 
     interface Presenter : BaseContract.Presenter<View> {

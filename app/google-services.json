@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "32825608342-c62j93l6jfivs7feo8aphhosth3q6ads.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zigzag.whar",
+            "certificate_hash": "f28f5ac8e790cf93583bf09d8928bfeaf1b1cc0c"
+          }
+        },
+        {
           "client_id": "32825608342-tfante45m0d233jicq4p3j89lhekdddr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

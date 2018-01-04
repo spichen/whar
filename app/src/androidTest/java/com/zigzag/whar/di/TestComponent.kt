@@ -1,25 +1,25 @@
 package com.zigzag.whar.di
 
-import com.zigzag.whar.App
+import com.zigzag.whar.TestApplication
 
 import javax.inject.Singleton
-import dagger.Component
 
+import dagger.Component
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
 
 /**
- * Created by salah on 20/12/17.
+ * Created by salah on 3/1/18.
  */
 
 @Singleton
 @Component(modules = arrayOf(
         ApplicationModule::class,
-        FirebaseModule::class,
+        TestFirebaseModule::class,
         AndroidSupportInjectionModule::class,
         ActivityBindingModule::class
 ))
-interface AppComponent : AndroidInjector<App> {
+interface TestComponent : AndroidInjector<TestApplication> {
     @Component.Builder
-    abstract class Builder : AndroidInjector.Builder<App>()
+    abstract class Builder : AndroidInjector.Builder<TestApplication>()
 }
