@@ -37,7 +37,10 @@ class LoginActivityPresenter @Inject constructor() : BasePresenter<LoginActivity
                             view?.updateUItoInputCode()
                         }
                 }) {
-                    throwable: Throwable? ->  Log.d(TAG,throwable?.localizedMessage)
+                    throwable: Throwable? ->
+                        view?.showError(throwable!!.localizedMessage.split(".")[0])
+                        Log.d(TAG,throwable?.localizedMessage)
+                        Log.d(TAG,throwable?.message)
                 }
     }
 }

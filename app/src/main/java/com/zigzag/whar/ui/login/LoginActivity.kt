@@ -1,5 +1,6 @@
 package com.zigzag.whar.ui.login
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.NonNull
@@ -20,6 +21,10 @@ import android.view.ViewGroup
 import android.support.v4.view.PagerAdapter
 import android.view.View
 import com.zigzag.whar.ui.dashboard.DashboardActivity
+import android.content.Context.INPUT_METHOD_SERVICE
+import android.view.inputmethod.InputMethodManager
+import org.jetbrains.anko.design.longSnackbar
+
 
 class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContract.Presenter>(), LoginActivityContract.View{
 
@@ -55,11 +60,16 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
                         disableSubmitButton()
                     }
                 }
-        Observable.merge<Unit>(et_number.editorActions()
-                .map{_->Unit}, btn_submit.clicks()).map{_->(s_country_code.selectedItem.toString().split("+")[1] + et_number.text.toString()).toLong()}
-                .subscribe { query ->
-                    presenter.requestCode(query)
-                }
+        Observable.merge(et_number.editorActions(), btn_submit.clicks())
+                .map{s_country_code.selectedItem.toString().split("+")[1] + et_number.text.toString()}
+                .subscribe ({ query ->
+                    hideKeyboard()
+                    try {
+                        presenter.requestCode(query.toLong())
+                    } catch (e : Exception){
+                        et_number.error = getString(R.string.invalid_phone_number)
+                    }
+                })
     }
 
     internal inner class phoneAuthSliderAdapter : PagerAdapter() {
@@ -102,7 +112,7 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
     }
 
     override fun showError(error: String) {
-        snackbar(btn_submit,error)
+        longSnackbar(btn_submit,error)
     }
 
     override fun setSubmitButtonText(text: String) {

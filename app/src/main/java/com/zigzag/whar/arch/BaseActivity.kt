@@ -2,8 +2,10 @@ package com.zigzag.whar.arch
 
 import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
 import android.support.annotation.CallSuper
+import android.view.inputmethod.InputMethodManager
 
 import dagger.android.support.DaggerAppCompatActivity
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -51,4 +53,12 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
 
     protected abstract fun initPresenter(): P
 
+
+    fun hideKeyboard(){
+        val view = this.currentFocus
+        if (view != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
 }

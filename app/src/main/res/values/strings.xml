@@ -5,4 +5,5 @@
     <string name="verify_your_number">Verify your number</string>
     <string name="verify">Verify</string>
     <string name="enter_code">Enter code</string>
+    <string name="invalid_phone_number">Invalid Phone Number</string>
 </resources>
