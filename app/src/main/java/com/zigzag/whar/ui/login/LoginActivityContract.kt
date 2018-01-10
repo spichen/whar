@@ -13,10 +13,12 @@ class LoginActivityContract {
         fun disableSubmitButton()
         fun enableSubmitButton()
         fun updateUItoInputCode()
+        fun updateUItoInputNumber()
         fun onVerified()
     }
 
     interface Presenter : BaseContract.Presenter<View> {
         fun requestCode(number: Number)
+        fun verifyCode(code: Number)
     }
 }

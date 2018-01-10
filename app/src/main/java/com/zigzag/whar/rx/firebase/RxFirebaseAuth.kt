@@ -1,4 +1,5 @@
 package com.zigzag.whar.rx.firebase
+import android.util.Log
 import com.google.android.gms.tasks.TaskExecutors.MAIN_THREAD
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*

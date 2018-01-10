@@ -69,12 +69,12 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$firebase_version"
     implementation "com.google.firebase:firebase-auth:$firebase_version"
 
-    compile "com.google.code.findbugs:jsr305:$jsr305Version"
+    implementation "com.google.code.findbugs:jsr305:$jsr305Version"
+
+    // ui libs
+    implementation 'br.com.simplepass:loading-button-android:1.8.4'
 
     // test
-    //implementation 'org.jetbrains.spek:spek-api:1.1.5'
-    //implementation 'org.junit.platform:junit-platform-runner:1.0.0'
-    //implementation 'org.jetbrains.spek:spek-junit-platform-engine:1.1.5'
     implementation 'com.android.support.test.espresso:espresso-idling-resource:3.0.1'
     testImplementation 'junit:junit:4.12'
     testImplementation "org.mockito:mockito-core:$mockito_version"

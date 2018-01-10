@@ -1,22 +1,22 @@
 package com.zigzag.whar.ui.login
 
 import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.action.ViewActions.typeText
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.*
-import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import com.zigzag.whar.R
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.hamcrest.CoreMatchers.not
 import org.junit.Rule
-import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.intent.Intents.intended
 import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import com.zigzag.whar.ui.dashboard.DashboardActivity
 import android.support.test.espresso.intent.rule.IntentsTestRule
-import org.hamcrest.CoreMatchers.allOf
+import android.support.test.espresso.Espresso.onView
+import android.support.test.espresso.Espresso.onData
+import android.support.test.espresso.action.ViewActions.*
+import org.hamcrest.CoreMatchers.*
+
 
 /**
  * Created by salah on 30/12/17.
@@ -28,29 +28,68 @@ class LoginActivityTest {
     @Rule @JvmField
     var intentsTestRule = IntentsTestRule<LoginActivity>(LoginActivity::class.java)
 
-
     @Test
     fun checkIfSubmitButtonIsEnablingWhenNumberIsValid() {
         onView(withId(R.id.et_number)).perform(typeText("9895"))
         onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
-
         onView(withId(R.id.et_number)).perform(typeText("340989"))
         onView(withId(R.id.btn_submit)).check(matches(isEnabled()))
-
         onView(withId(R.id.et_number)).perform(typeText("9895"))
         onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
-
     }
 
     @Test
     fun checkIfCodeInputViewIsDisplayedWhenCorrectNumberInputted() {
+        onView(withId(R.id.s_country_code)).perform(click())
+        onData(allOf(`is`(instanceOf(String::class.java)), `is`("IN +91"))).perform(click())
+
         onView(withId(R.id.et_number)).perform(typeText("9747797987"))
         onView(withId(R.id.btn_submit)).perform(click())
         onView(withId(R.id.tv_enter_code)).check(matches(isDisplayed()))
+        onView(withText("9747797987 (Tap to edit)")).check(matches(isDisplayed()))
+    }
+
+
+    @Test
+    fun checkIfNumberEditTapIsRevertingToNumberField() {
+        onView(withId(R.id.s_country_code)).perform(click())
+        onData(allOf(`is`(instanceOf(String::class.java)), `is`("IN +91"))).perform(click())
+
+        onView(withId(R.id.et_number)).perform(typeText("9747797987"))
+        onView(withId(R.id.btn_submit)).perform(click())
+        onView(withId(R.id.tv_enter_code)).check(matches(isDisplayed()))
+        onView(withText("9747797987 (Tap to edit)")).perform(click())
+        onView(withId(R.id.et_number)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun checkVerifyButtonEnableFunctionality() {
+        onView(withId(R.id.s_country_code)).perform(click())
+        onData(allOf(`is`(instanceOf(String::class.java)), `is`("IN +91"))).perform(click())
+
+        onView(withId(R.id.et_number)).perform(typeText("9747797987"))
+        onView(withId(R.id.btn_submit)).perform(click())
+        onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
+        onView(withId(R.id.et_code_1)).perform(typeText("1"))
+        onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
+        onView(withId(R.id.et_code_2)).perform(typeText("1"))
+        onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
+        onView(withId(R.id.et_code_3)).perform(typeText("1"))
+        onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
+        onView(withId(R.id.et_code_4)).perform(typeText("1"))
+        onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
+        onView(withId(R.id.et_code_5)).perform(typeText("1"))
+        onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
+        onView(withId(R.id.et_code_6)).perform(typeText("1"))
+        onView(withId(R.id.btn_submit)).check(matches(isEnabled()))
+        onView(withId(R.id.et_code_5)).perform(replaceText(""))
+        onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
     }
 
     @Test
     fun checkIfDashboardActivityIsLaunchedOnVerificationSuccess() {
+        onView(withId(R.id.s_country_code)).perform(click())
+        onData(allOf(`is`(instanceOf(String::class.java)), `is`("IN +91"))).perform(click())
         onView(withId(R.id.et_number)).perform(typeText("9895940989"))
         onView(withId(R.id.btn_submit)).perform(click())
         intended(hasComponent(DashboardActivity::class.java.name))
@@ -68,9 +107,10 @@ class LoginActivityTest {
 
     @Test
     fun checkIfFirebaseErrorMessageIsDisplayed() {
-        onView(withId(R.id.et_number)).perform(typeText("0000000"))
+        onView(withId(R.id.s_country_code)).perform(click())
+        onData(allOf(`is`(instanceOf(String::class.java)), `is`("IN +91"))).perform(click())
+        onView(withId(R.id.et_number)).perform(typeText("0000000000"))
         onView(withId(R.id.btn_submit)).perform(click())
-        onView(allOf(withId(android.support.design.R.id.snackbar_text), withText("The format of the phone number provided is incorrect")))
-                .check(matches(isDisplayed()))
+        onView(withText("The format of the phone number provided is incorrect")).check(matches(isDisplayed()))
     }
 }

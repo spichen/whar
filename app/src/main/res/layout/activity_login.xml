@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,135 +8,68 @@
     tools:context="com.zigzag.whar.ui.login.LoginActivity">
 
     <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:src="@drawable/buildings_outline"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="24dp"
-
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_logo">
+        app:layout_constraintTop_toBottomOf="@+id/iv_logo"
+        app:layout_constraintVertical_bias="0.07999998">
 
-        <com.zigzag.whar.customviews.NonSwipeableViewPager
-            android:id="@+id/vp_container"
+        <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/cl_number_input_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="8dp"
+            <com.zigzag.whar.customviews.NonSwipeableViewPager
+                android:id="@+id/vp_container"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp" />
+
+            <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+                android:id="@+id/btn_submit"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="16dp"
+                android:background="@drawable/login_button_shape"
+                android:text="@string/get_code"
+                android:textColor="@color/colorPrimaryDark"
+                app:spinning_bar_width="4dp"
+                app:spinning_bar_color="@color/colorPrimary"
+                app:spinning_bar_padding="6dp"
+                app:initialCornerAngle="5dp"
+                app:finalCornerAngle="50dp"/>
 
-                <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/tv_verify_your_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/verify_your_number"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    app:fontFamily="sans-serif-bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/et_number"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:ems="10"
-                    android:hint="@string/phone_number"
-                    android:inputType="phone"
-                    android:textSize="20sp"
-                    app:backgroundTint="@android:color/white"
-                    app:layout_constraintEnd_toEndOf="@+id/btn_submit"
-                    app:layout_constraintStart_toEndOf="@+id/s_country_code"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_verify_your_number" />
-
-                <android.support.v7.widget.AppCompatSpinner
-                    android:id="@+id/s_country_code"
-                    style="@style/CountrySpinnerStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="3dp"
-                    android:gravity="center_horizontal"
-                    android:popupBackground="@android:color/white"
-                    app:backgroundTint="@android:color/white"
-                    app:layout_constraintBottom_toBottomOf="@+id/et_number"
-                    app:layout_constraintStart_toStartOf="@+id/btn_submit" />
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/btn_submit"
-                    android:layout_width="250dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/get_code"
-                    android:textColor="@color/colorPrimary"
-                    app:backgroundTint="@android:color/white"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/et_number" />
-            </android.support.constraint.ConstraintLayout>
-
-
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/cl_code_input_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp">
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/tv_enter_code"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/enter_code"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    app:fontFamily="sans-serif-bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </android.support.constraint.ConstraintLayout>
-        </com.zigzag.whar.customviews.NonSwipeableViewPager>
+        </android.support.v7.widget.LinearLayoutCompat>
     </ScrollView>
+
 
     <ImageView
         android:id="@+id/iv_logo"
         android:layout_width="250dp"
-        android:layout_height="wrap_content"
+        android:layout_height="96dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="50dp"
         android:adjustViewBounds="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.06999999"
         app:srcCompat="@drawable/logo" />
 
 </android.support.constraint.ConstraintLayout>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cl_code_input_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_enter_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/enter_code"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:fontFamily="sans-serif-bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:id="@+id/llc_number_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_phone_number">
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_code_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:ems="2"
+            android:maxLength="1"
+            android:textStyle="bold"
+            app:fontFamily="sans-serif-bold"
+            android:inputType="phone"
+            android:textSize="20sp"
+            app:backgroundTint="@android:color/white" />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_code_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:ems="2"
+            android:textStyle="bold"
+            app:fontFamily="sans-serif-bold"
+            android:maxLength="1"
+            android:inputType="phone"
+            android:textSize="20sp"
+            app:backgroundTint="@android:color/white" />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_code_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:ems="2"
+            android:textStyle="bold"
+            app:fontFamily="sans-serif-bold"
+            android:maxLength="1"
+            android:inputType="phone"
+            android:textSize="20sp"
+            app:backgroundTint="@android:color/white" />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_code_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:ems="2"
+            android:textStyle="bold"
+            app:fontFamily="sans-serif-bold"
+            android:maxLength="1"
+            android:inputType="phone"
+            android:textSize="20sp"
+            app:backgroundTint="@android:color/white" />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_code_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:ems="2"
+            android:textStyle="bold"
+            app:fontFamily="sans-serif-bold"
+            android:maxLength="1"
+            android:inputType="phone"
+            android:textSize="20sp"
+            app:backgroundTint="@android:color/white" />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_code_6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:ems="2"
+            android:textStyle="bold"
+            app:fontFamily="sans-serif-bold"
+            android:maxLength="1"
+            android:inputType="phone"
+            android:textSize="20sp"
+            app:backgroundTint="@android:color/white" />
+    </android.support.v7.widget.LinearLayoutCompat>
+
+    <TextView
+        android:id="@+id/tv_code_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center_horizontal"
+        android:text="@string/code_message"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_enter_code" />
+
+    <TextView
+        android:id="@+id/tv_phone_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:text="@string/tap_to_edit"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_code_msg" />
+
+</android.support.constraint.ConstraintLayout>

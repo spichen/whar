@@ -3,7 +3,11 @@
     <string name="phone_number">Phone number</string>
     <string name="get_code">Get Code</string>
     <string name="verify_your_number">Verify your number</string>
-    <string name="verify">Verify</string>
-    <string name="enter_code">Enter code</string>
+    <string name="enter_code">Enter verification code</string>
     <string name="invalid_phone_number">Invalid Phone Number</string>
+    <string name="verify">Verify</string>
+    <string name="otp_message">We will send you an SMS with a verification code.\n Standard carrier charges may apply</string>
+    <string name="code_message">We have sent a verification code to your number</string>
+    <string name="tap_to_edit">%1$s (Tap to edit)</string>
+
 </resources>
