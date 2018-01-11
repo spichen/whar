@@ -9,6 +9,7 @@ import com.zigzag.whar.arch.BaseContract
 class LoginActivityContract {
     interface View : BaseContract.View {
         fun showError(error: String)
+        fun showSuccess(message: String)
         fun setSubmitButtonText(text: String)
         fun disableSubmitButton()
         fun enableSubmitButton()
@@ -20,5 +21,6 @@ class LoginActivityContract {
     interface Presenter : BaseContract.Presenter<View> {
         fun requestCode(number: Number)
         fun verifyCode(code: Number)
+        fun resendCode()
     }
 }

@@ -17,28 +17,29 @@ import com.jakewharton.rxbinding2.widget.editorActions
 import io.reactivex.Observable
 import android.view.ViewGroup
 import android.support.v4.view.PagerAdapter
+import android.util.Log
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import com.zigzag.whar.ui.dashboard.DashboardActivity
 import com.zigzag.whar.common.helpers.ViewHelpers.whiteLongSnackBar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.page_phone_number.view.*
 import kotlinx.android.synthetic.main.page_code.view.*
-import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.view.inputmethod.InputMethodManager
-
+import kotlinx.android.synthetic.main.page_phone_number.*
 
 class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContract.Presenter>(), LoginActivityContract.View{
-
-    @Inject lateinit var p : LoginActivityPresenter
+    @Inject lateinit var loginActivityPresenter : LoginActivityPresenter
 
     val TAG = "LoginActivity"
     val PAGE_PHONE_NUMBER = 0
     val PAGE_CODE = 1
     var phoneNumberPage : View? = null
     var codePage : View? = null
+    var phoneNumber : CharSequence? = null
 
-    override fun initPresenter(): LoginActivityContract.Presenter = p
+    override fun getPresenterImpl(): LoginActivityContract.Presenter = loginActivityPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,11 +63,8 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
     private fun initObservation() {
         phoneNumberPage?.et_number?.textChanges()
                 ?.subscribe { query ->
-                    if(Utils.isValidMobile(query)){
-                        enableSubmitButton()
-                    }else {
-                        disableSubmitButton()
-                    }
+                    validateGetCodeButton(query)
+                    phoneNumber = query
                 }
         Observable.merge(phoneNumberPage?.et_number?.editorActions(), btn_submit.clicks())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -128,12 +126,24 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
                 ?.subscribe{
                     validateVerifyButton()
                 }
+        tv_resend?.clicks()
+                ?.subscribe{
+                    presenter.resendCode()
+                }
     }
 
     private fun validateVerifyButton(){
         if(getUserInputtedCode().toString().length == 6){
             enableSubmitButton()
         }else{
+            disableSubmitButton()
+        }
+    }
+
+    private fun validateGetCodeButton(phoneNumber : CharSequence){
+        if(Utils.isValidMobile(phoneNumber)){
+            enableSubmitButton()
+        }else {
             disableSubmitButton()
         }
     }
@@ -169,11 +179,11 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
         }
         disableSubmitButton()
 
-        codePage?.tv_phone_number?.text = getString(R.string.tap_to_edit,phoneNumberPage?.et_number?.text.toString())
+        codePage?.tv_phone_number?.text = getString(R.string.tap_to_edit, phoneNumber)
         vp_container.currentItem = PAGE_CODE
 
         codePage?.et_code_1?.requestFocus()
-
+        tv_resend.visibility = VISIBLE
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(codePage?.et_code_1, InputMethodManager.SHOW_IMPLICIT)
     }
@@ -181,6 +191,8 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
     override fun updateUItoInputNumber() {
         btn_submit.background = ContextCompat.getDrawable(this,R.drawable.login_button_shape)
         btn_submit.setText(R.string.get_code)
+        validateGetCodeButton(et_number.text.toString())
+        tv_resend.visibility = GONE
         vp_container.currentItem = PAGE_PHONE_NUMBER
     }
 
@@ -216,7 +228,12 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
     }
 
     override fun showError(error: String) {
-        whiteLongSnackBar(btn_submit,error)
+        whiteLongSnackBar(btn_submit,error,R.color.colorPrimaryDark)
+        btn_submit.revertAnimation()
+    }
+
+    override fun showSuccess(message: String) {
+        whiteLongSnackBar(btn_submit,message,R.color.colorSuccess)
         btn_submit.revertAnimation()
     }
 
@@ -233,6 +250,27 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
         btn_submit.isEnabled = true
         btn_submit.alpha = 1f
     }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+
+        outState!!.putString("phone_number", phoneNumber.toString())
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        phoneNumber = savedInstanceState.getString("phone_number")
+
+        if(vp_container.currentItem == PAGE_CODE){
+            codePage?.tv_phone_number?.text = getString(R.string.tap_to_edit, phoneNumber)
+            btn_submit.setText(R.string.verify)
+        }else{
+            phoneNumberPage?.tv_phone_number?.text = phoneNumber
+            btn_submit.setText(R.string.get_code)
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         btn_submit.dispose()

@@ -1,6 +1,7 @@
 package com.zigzag.whar.ui.login
 
 import android.util.Log
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PhoneAuthCredential
 import com.zigzag.whar.arch.BasePresenter
 import com.zigzag.whar.rx.firebase.RxFirebaseAuth
@@ -18,12 +19,16 @@ class LoginActivityPresenter @Inject constructor() : BasePresenter<LoginActivity
     @Inject
     lateinit var rxFirebaseAuth : RxFirebaseAuth
 
+    lateinit var verificationData : VerificationData
+
+    lateinit var phoneNumber : Number
+
     override fun onPresenterCreated() {
         //view?.disableSubmitButton()
     }
 
     override fun requestCode(number: Number) {
-        Log.d("num",number.toString())
+        phoneNumber = number
         rxFirebaseAuth
                 .phoneAuthProvider(number)
                 .subscribe({
@@ -31,6 +36,7 @@ class LoginActivityPresenter @Inject constructor() : BasePresenter<LoginActivity
                         if(result is PhoneAuthCredential){
                             view?.onVerified()
                         }else if (result is VerificationData){
+                            verificationData = result
                             view?.updateUItoInputCode()
                         }
                 }) {
@@ -39,7 +45,20 @@ class LoginActivityPresenter @Inject constructor() : BasePresenter<LoginActivity
                 }
     }
 
-    override fun verifyCode(code: Number) {
+    override fun resendCode() {
+        rxFirebaseAuth.resendCode(phoneNumber,verificationData.token)
+        view?.showSuccess("Code Resent")
+    }
 
+    override fun verifyCode(code: Number) {
+        rxFirebaseAuth
+                .verifyPhoneNumber(verificationData.verificationId,code = code.toString())
+                .subscribe({
+                    result: FirebaseUser? ->
+                        view?.onVerified()
+                }) {
+                    throwable: Throwable? ->
+                    view?.showError(throwable!!.localizedMessage.split(".")[0])
+                }
     }
 }

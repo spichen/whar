@@ -10,8 +10,6 @@ import android.view.inputmethod.InputMethodManager
 import dagger.android.support.DaggerAppCompatActivity
 import com.google.firebase.analytics.FirebaseAnalytics
 
-
-
 /**
  * Created by salah on 27/12/17.
  */
@@ -20,7 +18,6 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
 
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
     private val lifecycleRegistry = LifecycleRegistry(this)
-
     protected lateinit var presenter: P
     private var isPresenterCreated = false
     @CallSuper
@@ -29,10 +26,9 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
         val viewModel = ViewModelProviders.of(this).get(BaseViewModel<V,P>()::class.java)
         if (viewModel.presenter == null) {
-            viewModel.presenter = initPresenter()
+            viewModel.presenter = getPresenterImpl()
             isPresenterCreated = true
         }
-
         presenter = viewModel.presenter as P
         presenter.attachLifecycle(lifecycle)
         presenter.attachView(this as V)
@@ -51,8 +47,7 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
         presenter.detachView()
     }
 
-    protected abstract fun initPresenter(): P
-
+    protected abstract fun getPresenterImpl(): P
 
     fun hideKeyboard(){
         val view = this.currentFocus

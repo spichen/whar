@@ -10,11 +10,11 @@ import org.jetbrains.anko.design.longSnackbar
  * Created by salah on 6/1/18.
  */
 object ViewHelpers {
-    fun whiteLongSnackBar(view : View, message:String) : View
+    fun whiteLongSnackBar(view : View, message:String, textColor : Int) : View
     {
         val snackbarView = longSnackbar(view,message).view
         snackbarView.setBackgroundColor(ContextCompat.getColor(view.context,android.R.color.white))
-        snackbarView.findViewById<TextView>(android.support.design.R.id.snackbar_text).setTextColor(ContextCompat.getColor(view.context, R.color.colorPrimaryDark))
+        snackbarView.findViewById<TextView>(android.support.design.R.id.snackbar_text).setTextColor(ContextCompat.getColor(view.context, textColor))
         return snackbarView
     }
 }
