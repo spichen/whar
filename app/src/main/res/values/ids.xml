@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="incomplete_code" type="id">Incomplete code. Please enter all digits.</item>
+</resources>

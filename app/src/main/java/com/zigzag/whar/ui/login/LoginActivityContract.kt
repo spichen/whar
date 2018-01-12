@@ -9,12 +9,17 @@ import com.zigzag.whar.arch.BaseContract
 class LoginActivityContract {
     interface View : BaseContract.View {
         fun showError(error: String)
+        fun showError(error: Int)
         fun showSuccess(message: String)
+        fun showSuccess(message: Int)
         fun setSubmitButtonText(text: String)
         fun disableSubmitButton()
         fun enableSubmitButton()
-        fun updateUItoInputCode()
-        fun updateUItoInputNumber()
+        fun revertSubmitButton()
+        fun startSubmitButtonAnimation()
+        fun completeSubmitButtonAnimation()
+        fun displayCodeInputPage()
+        fun displayPhoneNumberInputPage()
         fun onVerified()
     }
 

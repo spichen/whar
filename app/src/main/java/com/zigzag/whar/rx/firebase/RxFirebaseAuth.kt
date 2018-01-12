@@ -16,11 +16,10 @@ import com.google.android.gms.tasks.OnCompleteListener
 /**
  * Created by salah on 2/1/18.
  */
-/*
 
+/*
 @Suppress("NOTHING_TO_INLINE")
-public inline fun PhoneAuthProvider.rxVerifyPhoneNumber(number: Number) : Observable<Any>
-        = RxFirebaseAuth.phoneAuthProvider(this,number)
+public inline fun PhoneAuthProvider.rxVerifyPhoneNumber(number: Number) : Observable<Any> = RxFirebaseAuth.phoneAuthProvider(this,number)
 */
 
 data class VerificationData(val verificationId: String, val token: PhoneAuthProvider.ForceResendingToken)
@@ -72,10 +71,9 @@ open class RxFirebaseAuth {
                             emitter.onNext(task.result.user)
                             emitter.onComplete()
                         } else {
-
                             Log.w(TAG, "signInWithCredential:failure", task.exception)
                             if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                                emitter.onError(RxFirebaseAuthError("The verification code entered was invalid"))
+                                emitter.onError(RxFirebaseAuthError())
                             }
                         }
                     })

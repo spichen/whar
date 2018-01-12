@@ -13,4 +13,5 @@ class RxFirebaseNullDataException : NullPointerException {
 
 class RxFirebaseAuthError : FirebaseException {
     constructor(detailMessage: String) : super(detailMessage)
+    constructor()
 }

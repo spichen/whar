@@ -45,14 +45,14 @@
             android:id="@+id/et_code_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:ems="2"
+            android:gravity="center_horizontal"
+            android:inputType="number"
             android:maxLength="1"
-            android:textStyle="bold"
-            app:fontFamily="sans-serif-bold"
-            android:inputType="phone"
             android:textSize="20sp"
-            app:backgroundTint="@android:color/white" />
+            android:textStyle="bold"
+            app:backgroundTint="@android:color/white"
+            app:fontFamily="sans-serif-bold" />
 
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/et_code_2"
@@ -60,10 +60,10 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:ems="2"
+            android:inputType="number"
             android:textStyle="bold"
             app:fontFamily="sans-serif-bold"
             android:maxLength="1"
-            android:inputType="phone"
             android:textSize="20sp"
             app:backgroundTint="@android:color/white" />
 
@@ -76,7 +76,7 @@
             android:textStyle="bold"
             app:fontFamily="sans-serif-bold"
             android:maxLength="1"
-            android:inputType="phone"
+            android:inputType="number"
             android:textSize="20sp"
             app:backgroundTint="@android:color/white" />
 
@@ -89,7 +89,7 @@
             android:textStyle="bold"
             app:fontFamily="sans-serif-bold"
             android:maxLength="1"
-            android:inputType="phone"
+            android:inputType="number"
             android:textSize="20sp"
             app:backgroundTint="@android:color/white" />
 
@@ -102,7 +102,7 @@
             android:textStyle="bold"
             app:fontFamily="sans-serif-bold"
             android:maxLength="1"
-            android:inputType="phone"
+            android:inputType="number"
             android:textSize="20sp"
             app:backgroundTint="@android:color/white" />
 
@@ -115,7 +115,7 @@
             android:textStyle="bold"
             app:fontFamily="sans-serif-bold"
             android:maxLength="1"
-            android:inputType="phone"
+            android:inputType="number"
             android:textSize="20sp"
             app:backgroundTint="@android:color/white" />
     </android.support.v7.widget.LinearLayoutCompat>
