@@ -17,7 +17,6 @@ import com.jakewharton.rxbinding2.widget.editorActions
 import io.reactivex.Observable
 import android.view.ViewGroup
 import android.support.v4.view.PagerAdapter
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -30,7 +29,7 @@ import android.view.inputmethod.InputMethodManager
 import com.jakewharton.rxbinding2.support.v4.view.pageSelections
 import com.zigzag.whar.common.constants.PHONE_NUMBER
 
-class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContract.Presenter>(), LoginActivityContract.View{
+class LoginActivity : BaseActivity<LoginActivityContract.View, LoginActivityContract.Presenter>(), LoginActivityContract.View{
 
     @Inject lateinit var loginActivityPresenter : LoginActivityPresenter
 
@@ -53,7 +52,7 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
     private fun initViews() {
         phoneNumberPage = View.inflate(this,R.layout.page_phone_number,null)
         codePage = View.inflate(this,R.layout.page_code,null)
-        vp_container.adapter = phoneAuthSliderAdapter()
+        vp_container.adapter = PhoneAuthSliderAdapter()
         val spinnerArrayAdapter = ArrayAdapter<String>(this, R.layout.country_spinner_item, resources.getStringArray(R.array.country_code))
         phoneNumberPage?.s_country_code?.adapter = spinnerArrayAdapter
         spinnerArrayAdapter.setDropDownViewResource(R.layout.country_spinner_popup_item)
@@ -187,7 +186,7 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
     }
 
     override fun completeSubmitButtonAnimation() {
-
+        //btn_submit.doneLoadingAnimation(R.color.green,)
     }
 
     private fun validateSubmitButton(){
@@ -227,10 +226,6 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
 
     override fun displayPhoneNumberInputPage() {
         vp_container.currentItem = PAGE_PHONE_NUMBER
-    }
-
-    override fun onVerified() {
-        startActivity(Intent(this@LoginActivity,DashboardActivity::class.java))
     }
 
     private fun getDefaultCountryPosition() : Int {
@@ -292,7 +287,7 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
         btn_submit.alpha = 1f
     }
 
-    fun showKeyboard(view : View){
+    private fun showKeyboard(view : View){
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
@@ -317,7 +312,7 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
         }
     }
 
-    internal inner class phoneAuthSliderAdapter : PagerAdapter() {
+    internal inner class PhoneAuthSliderAdapter : PagerAdapter() {
         override fun instantiateItem(collection: ViewGroup, position: Int): View? {
             when (position) {
                 PAGE_PHONE_NUMBER -> {
@@ -345,4 +340,9 @@ class LoginActivity : BaseActivity<LoginActivityContract.View,LoginActivityContr
         super.onDestroy()
         btn_submit.dispose()
     }
+
+    override fun logout() {
+        //NO-OP
+    }
+
 }

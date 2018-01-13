@@ -1,8 +1,7 @@
 package com.zigzag.whar.rx.firebase
+import android.support.annotation.NonNull
 import com.google.android.gms.tasks.TaskExecutors.MAIN_THREAD
 import com.google.firebase.FirebaseException
-import com.google.firebase.auth.*
-import io.reactivex.Maybe
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 import com.google.firebase.auth.PhoneAuthProvider
@@ -12,6 +11,8 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.AuthResult
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.FirebaseAuth
+import io.reactivex.Maybe
 
 /**
  * Created by salah on 2/1/18.
@@ -30,10 +31,13 @@ open class RxFirebaseAuth {
 
     lateinit var phoneAuthCallback : PhoneAuthProvider.OnVerificationStateChangedCallbacks
 
-    fun signInWithEmailAndPassword(firebaseAuth: FirebaseAuth,
-                                   email: String,
-                                   password: String): Maybe<AuthResult> {
-        return Maybe.create { emitter -> RxHandler.assignOnTask(emitter, firebaseAuth.signInWithEmailAndPassword(email, password)) }
+    @NonNull
+    open fun observeAuthState(): Observable<FirebaseAuth> {
+        return Observable.create { emitter ->
+            val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth -> emitter.onNext(firebaseAuth) }
+            FirebaseAuth.getInstance().addAuthStateListener(authStateListener)
+            emitter.setCancellable { FirebaseAuth.getInstance().removeAuthStateListener(authStateListener) }
+        }
     }
 
     open fun phoneAuthProvider(number: Number): Observable<Any> {
@@ -62,14 +66,22 @@ open class RxFirebaseAuth {
         }
     }
 
-    open fun verifyPhoneNumber(verificationId : String, code: String): Observable<FirebaseUser> {
-        val credential = PhoneAuthProvider.getCredential(verificationId, code)
-        return Observable.create { emitter ->
+    open fun resendCode(number: Number, token: PhoneAuthProvider.ForceResendingToken) {
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                number.toString(),
+                60,
+                TimeUnit.SECONDS,
+                MAIN_THREAD,
+                phoneAuthCallback,
+                token)
+    }
+
+    open fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential): Maybe<FirebaseUser> {
+        return Maybe.create { emitter ->
             FirebaseAuth.getInstance().signInWithCredential(credential)
                     .addOnCompleteListener(MAIN_THREAD, OnCompleteListener<AuthResult> { task ->
                         if (task.isSuccessful) {
-                            emitter.onNext(task.result.user)
-                            emitter.onComplete()
+                            emitter.onSuccess(task.result.user)
                         } else {
                             Log.w(TAG, "signInWithCredential:failure", task.exception)
                             if (task.exception is FirebaseAuthInvalidCredentialsException) {
@@ -80,13 +92,7 @@ open class RxFirebaseAuth {
         }
     }
 
-    open fun resendCode(number: Number, token: PhoneAuthProvider.ForceResendingToken) {
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                number.toString(),
-                60,
-                TimeUnit.SECONDS,
-                MAIN_THREAD,
-                phoneAuthCallback,
-                token)
+    open fun signInWithCode(verificationId: String, code : String): Maybe<FirebaseUser> {
+        return signInWithPhoneAuthCredential(PhoneAuthProvider.getCredential(verificationId, code))
     }
 }

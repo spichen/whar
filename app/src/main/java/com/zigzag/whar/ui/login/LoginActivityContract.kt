@@ -1,5 +1,6 @@
 package com.zigzag.whar.ui.login
 
+import com.google.firebase.auth.PhoneAuthCredential
 import com.zigzag.whar.arch.BaseContract
 
 /**
@@ -20,12 +21,12 @@ class LoginActivityContract {
         fun completeSubmitButtonAnimation()
         fun displayCodeInputPage()
         fun displayPhoneNumberInputPage()
-        fun onVerified()
     }
 
     interface Presenter : BaseContract.Presenter<View> {
         fun requestCode(number: Number)
         fun verifyCode(code: Number)
         fun resendCode()
+        fun signIn(phoneAuthCredential : PhoneAuthCredential)
     }
 }

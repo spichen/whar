@@ -9,7 +9,10 @@ import android.os.Bundle
 
 interface BaseContract {
 
-    interface View
+    interface View{
+        fun logout()
+        fun gotoDashboard()
+    }
 
     interface Presenter<V : BaseContract.View> {
 

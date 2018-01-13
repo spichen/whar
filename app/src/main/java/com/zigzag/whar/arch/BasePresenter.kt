@@ -2,9 +2,14 @@ package com.zigzag.whar.arch
 
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.annotation.CallSuper
+import com.google.firebase.auth.FirebaseAuth
 import com.zigzag.whar.di.ActivityScoped
+import com.zigzag.whar.rx.firebase.RxFirebaseAuth
+import io.reactivex.disposables.Disposable
+import javax.inject.Inject
 
 /**
  * Created by salah on 20/12/17.
@@ -13,12 +18,17 @@ import com.zigzag.whar.di.ActivityScoped
 @ActivityScoped
 abstract class BasePresenter<V : BaseContract.View> : LifecycleObserver, BaseContract.Presenter<V> {
 
+    @Inject
+    lateinit var rxFirebaseAuth : RxFirebaseAuth
+
     override var stateBundle: Bundle? = Bundle()
 
     override var view: V? = null
 
     override val isViewAttached: Boolean
         get() = view != null
+
+    lateinit var authObserver : Disposable
 
     override fun attachLifecycle(lifecycle: Lifecycle) {
         lifecycle.addObserver(this)
@@ -41,9 +51,17 @@ abstract class BasePresenter<V : BaseContract.View> : LifecycleObserver, BaseCon
         if (stateBundle != null && !stateBundle!!.isEmpty) {
             stateBundle!!.clear()
         }
+        authObserver.dispose()
     }
 
     override fun onPresenterCreated() {
-        //NO-OP
+        authObserver = rxFirebaseAuth.observeAuthState()
+                .subscribe { firebaseAuth ->
+                    if(firebaseAuth.currentUser==null){
+                        view?.logout()
+                    }else{
+                        view?.gotoDashboard()
+                    }
+                }
     }
 }

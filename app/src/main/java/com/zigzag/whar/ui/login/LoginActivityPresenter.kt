@@ -3,9 +3,9 @@ package com.zigzag.whar.ui.login
 import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthProvider
 import com.zigzag.whar.R
 import com.zigzag.whar.arch.BasePresenter
-import com.zigzag.whar.rx.firebase.RxFirebaseAuth
 import com.zigzag.whar.rx.firebase.VerificationData
 import javax.inject.Inject
 
@@ -17,16 +17,9 @@ class LoginActivityPresenter @Inject constructor() : BasePresenter<LoginActivity
 
     val TAG = "LoginActivityPresenter"
 
-    @Inject
-    lateinit var rxFirebaseAuth : RxFirebaseAuth
-
     lateinit var verificationData : VerificationData
 
     lateinit var phoneNumber : Number
-
-    override fun onPresenterCreated() {
-        //view?.disableSubmitButton()
-    }
 
     override fun requestCode(number: Number) {
         phoneNumber = number
@@ -35,7 +28,7 @@ class LoginActivityPresenter @Inject constructor() : BasePresenter<LoginActivity
                 .subscribe({
                     result: Any? ->
                         if(result is PhoneAuthCredential){
-                            view?.onVerified()
+                            signIn(result)
                         }else if (result is VerificationData){
                             verificationData = result
                             view?.displayCodeInputPage()
@@ -52,13 +45,25 @@ class LoginActivityPresenter @Inject constructor() : BasePresenter<LoginActivity
     }
 
     override fun verifyCode(code: Number) {
-        Log.d(TAG,"code " + code)
+        rxFirebaseAuth.signInWithCode(verificationData.verificationId, code.toString())
+                    .subscribe({
+                        result: FirebaseUser? ->
+                        Log.d(TAG,"susss")
+                        //view?.onVerified()
+                    }) {
+                        throwable: Throwable? ->
+                        Log.d(TAG,"susss " + throwable?.localizedMessage)
+                        view?.showError(R.string.invalid_code)
+                    }
+    }
+
+    override fun signIn(phoneAuthCredential: PhoneAuthCredential) {
         rxFirebaseAuth
-                .verifyPhoneNumber(verificationData.verificationId, code.toString())
+                .signInWithPhoneAuthCredential(phoneAuthCredential)
                 .subscribe({
                     result: FirebaseUser? ->
-                        Log.d(TAG,"susss")
-                        view?.onVerified()
+                    Log.d(TAG,"susss")
+                    //view?.onVerified()
                 }) {
                     throwable: Throwable? ->
                     Log.d(TAG,"susss " + throwable?.localizedMessage)

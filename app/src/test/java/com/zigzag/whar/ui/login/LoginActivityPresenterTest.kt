@@ -4,8 +4,6 @@ import org.junit.Test
 
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
-import io.reactivex.subscribers.TestSubscriber
-
 
 
 /**

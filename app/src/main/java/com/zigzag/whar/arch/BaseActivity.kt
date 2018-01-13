@@ -3,12 +3,15 @@ package com.zigzag.whar.arch
 import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.view.inputmethod.InputMethodManager
 
 import dagger.android.support.DaggerAppCompatActivity
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.zigzag.whar.ui.dashboard.DashboardActivity
+import com.zigzag.whar.ui.login.LoginActivity
 
 /**
  * Created by salah on 27/12/17.
@@ -20,6 +23,7 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
     private val lifecycleRegistry = LifecycleRegistry(this)
     protected lateinit var presenter: P
     private var isPresenterCreated = false
+
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,4 +60,15 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
+
+    override fun logout() {
+        startActivity(Intent(this@BaseActivity,LoginActivity::class.java))
+        finish()
+    }
+
+    override fun gotoDashboard() {
+        startActivity(Intent(this@BaseActivity,DashboardActivity::class.java))
+        finish()
+    }
+
 }

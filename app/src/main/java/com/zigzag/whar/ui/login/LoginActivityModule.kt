@@ -3,7 +3,6 @@ package com.zigzag.whar.ui.login
 import com.zigzag.whar.di.ActivityScoped
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 
 /**
  * Created by salah on 20/12/17.
