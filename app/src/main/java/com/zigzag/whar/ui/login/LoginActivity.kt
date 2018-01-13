@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.page_code.view.*
 import android.view.inputmethod.InputMethodManager
 import com.jakewharton.rxbinding2.support.v4.view.pageSelections
 import com.zigzag.whar.common.constants.PHONE_NUMBER
+import io.reactivex.disposables.CompositeDisposable
 
 class LoginActivity : BaseActivity<LoginActivityContract.View, LoginActivityContract.Presenter>(), LoginActivityContract.View{
 
@@ -39,6 +40,7 @@ class LoginActivity : BaseActivity<LoginActivityContract.View, LoginActivityCont
     var phoneNumberPage : View? = null
     var codePage : View? = null
     var phoneNumber : CharSequence? = null
+    var compositeDisposable : CompositeDisposable = CompositeDisposable()
 
     override fun getPresenterImpl(): LoginActivityContract.Presenter = loginActivityPresenter
 
@@ -60,105 +62,96 @@ class LoginActivity : BaseActivity<LoginActivityContract.View, LoginActivityCont
     }
 
     private fun initObservation() {
-
-        phoneNumberPage?.et_number?.textChanges()
-                ?.subscribe { query ->
-                    phoneNumber = query
-                    validateSubmitButton()
-                }
-
-        Observable.merge(phoneNumberPage?.et_number?.editorActions(),codePage?.et_code_6?.editorActions(), btn_submit.clicks())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map{
-                    if(vp_container.currentItem == PAGE_PHONE_NUMBER) {
-                        phoneNumberPage?.s_country_code?.selectedItem.toString().split("+")[1] + phoneNumberPage?.et_number?.text.toString()
-                    }else{
-                        getUserInputtedCode().toString()
-                    }
-                }
-                .subscribe { query ->
-                    hideKeyboard()
-                    if(vp_container.currentItem == PAGE_PHONE_NUMBER){
-                        try {
-                            startSubmitButtonAnimation()
-                            presenter.requestCode(query.toLong())
-                        } catch (e : Exception){
-                            phoneNumberPage?.et_number?.error = getString(R.string.invalid_phone_number)
-                            revertSubmitButton()
-                        }
-                    }else{
-                        if(validateCode()){
-                            startSubmitButtonAnimation()
-                            presenter.verifyCode(query.toLong())
+        compositeDisposable.addAll(
+                phoneNumberPage?.et_number?.textChanges()
+                    ?.subscribe { query ->
+                        phoneNumber = query
+                        validateSubmitButton()
+                    },
+                Observable.merge(phoneNumberPage?.et_number?.editorActions(),codePage?.et_code_6?.editorActions(), btn_submit.clicks())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .map{
+                        if(vp_container.currentItem == PAGE_PHONE_NUMBER) {
+                            phoneNumberPage?.s_country_code?.selectedItem.toString().split("+")[1] + phoneNumberPage?.et_number?.text.toString()
                         }else{
-                            showError(R.id.incomplete_code)
-                            revertSubmitButton()
+                            getUserInputtedCode().toString()
                         }
                     }
-                }
-
-        codePage?.tv_phone_number?.clicks()
-                ?.subscribe{
-                    displayPhoneNumberInputPage()
-                }
-
-        codePage?.et_code_1?.textChanges()
-                ?.subscribe{ query ->
-                    validateSubmitButton()
-                    if(query.length == 1){
-                        codePage?.et_code_2?.requestFocus()
+                    .subscribe { query ->
+                        hideKeyboard()
+                        if(vp_container.currentItem == PAGE_PHONE_NUMBER){
+                            try {
+                                startSubmitButtonAnimation()
+                                presenter.requestCode(query.toLong())
+                            } catch (e : Exception){
+                                phoneNumberPage?.et_number?.error = getString(R.string.invalid_phone_number)
+                                revertSubmitButton()
+                            }
+                        }else{
+                            if(validateCode()){
+                                startSubmitButtonAnimation()
+                                presenter.verifyCode(query.toLong())
+                            }else{
+                                showError(R.id.incomplete_code)
+                                revertSubmitButton()
+                            }
+                        }
+                    },
+                codePage?.tv_phone_number?.clicks()
+                    ?.subscribe{
+                        displayPhoneNumberInputPage()
+                    },
+                codePage?.et_code_1?.textChanges()
+                    ?.subscribe{ query ->
+                        validateSubmitButton()
+                        if(query.length == 1){
+                            codePage?.et_code_2?.requestFocus()
+                        }
+                    },
+                codePage?.et_code_2?.textChanges()
+                    ?.subscribe{ query ->
+                        validateSubmitButton()
+                        if(query.length == 1){
+                            codePage?.et_code_3?.requestFocus()
+                        }
+                    },
+                codePage?.et_code_3?.textChanges()
+                    ?.subscribe{ query ->
+                        validateSubmitButton()
+                        if(query.length == 1){
+                            codePage?.et_code_4?.requestFocus()
+                        }
+                    },
+                codePage?.et_code_4?.textChanges()
+                    ?.subscribe{ query ->
+                        validateSubmitButton()
+                        if(query.length == 1){
+                            codePage?.et_code_5?.requestFocus()
+                        }
+                    },
+                codePage?.et_code_5?.textChanges()
+                    ?.subscribe{ query ->
+                        validateSubmitButton()
+                        if(query.length == 1){
+                            codePage?.et_code_6?.requestFocus()
+                        }
+                    },
+                codePage?.et_code_6?.textChanges()
+                    ?.subscribe{
+                        validateSubmitButton()
+                    },
+                tv_resend?.clicks()
+                    ?.subscribe{
+                        presenter.resendCode()
+                        hideKeyboard()
+                    },
+                vp_container.pageSelections()
+                    .subscribe{ page ->
+                        revertSubmitButton()
+                        validateSubmitButton()
+                        updateUI(page)
                     }
-                }
-
-        codePage?.et_code_2?.textChanges()
-                ?.subscribe{ query ->
-                    validateSubmitButton()
-                    if(query.length == 1){
-                        codePage?.et_code_3?.requestFocus()
-                    }
-                }
-
-        codePage?.et_code_3?.textChanges()
-                ?.subscribe{ query ->
-                    validateSubmitButton()
-                    if(query.length == 1){
-                        codePage?.et_code_4?.requestFocus()
-                    }
-                }
-
-        codePage?.et_code_4?.textChanges()
-                ?.subscribe{ query ->
-                    validateSubmitButton()
-                    if(query.length == 1){
-                        codePage?.et_code_5?.requestFocus()
-                    }
-                }
-
-        codePage?.et_code_5?.textChanges()
-                ?.subscribe{ query ->
-                    validateSubmitButton()
-                    if(query.length == 1){
-                        codePage?.et_code_6?.requestFocus()
-                    }
-                }
-
-        codePage?.et_code_6?.textChanges()
-                ?.subscribe{
-                    validateSubmitButton()
-                }
-
-        tv_resend?.clicks()
-                ?.subscribe{
-                    presenter.resendCode()
-                    hideKeyboard()
-                }
-
-        vp_container.pageSelections()
-                .subscribe{ page ->
-                    revertSubmitButton()
-                    validateSubmitButton()
-                    updateUI(page)
-                }
+                )
     }
 
     override fun revertSubmitButton() {
@@ -186,7 +179,7 @@ class LoginActivity : BaseActivity<LoginActivityContract.View, LoginActivityCont
     }
 
     override fun completeSubmitButtonAnimation() {
-        //btn_submit.doneLoadingAnimation(R.color.green,)
+        // @TODO add success animation
     }
 
     private fun validateSubmitButton(){
@@ -338,6 +331,7 @@ class LoginActivity : BaseActivity<LoginActivityContract.View, LoginActivityCont
 
     override fun onDestroy() {
         super.onDestroy()
+        compositeDisposable.clear()
         btn_submit.dispose()
     }
 

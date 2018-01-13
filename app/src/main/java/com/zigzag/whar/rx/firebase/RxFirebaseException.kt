@@ -15,3 +15,7 @@ class RxFirebaseAuthError : FirebaseException {
     constructor(detailMessage: String) : super(detailMessage)
     constructor()
 }
+class RxFirebaseStorageError : FirebaseException {
+    constructor(detailMessage: String) : super(detailMessage)
+    constructor()
+}

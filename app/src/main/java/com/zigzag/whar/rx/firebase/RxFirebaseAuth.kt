@@ -1,4 +1,5 @@
 package com.zigzag.whar.rx.firebase
+import android.graphics.Bitmap
 import android.support.annotation.NonNull
 import com.google.android.gms.tasks.TaskExecutors.MAIN_THREAD
 import com.google.firebase.FirebaseException
@@ -13,6 +14,10 @@ import com.google.firebase.auth.AuthResult
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.Maybe
+import javax.inject.Inject
+import com.google.firebase.auth.UserProfileChangeRequest
+import io.reactivex.Completable
+
 
 /**
  * Created by salah on 2/1/18.
@@ -28,6 +33,9 @@ data class VerificationData(val verificationId: String, val token: PhoneAuthProv
 open class RxFirebaseAuth {
 
     val TAG = "RxFirebaseAuth"
+
+    @Inject
+    lateinit var rxFirebaseStorage : RxFirebaseStorage
 
     lateinit var phoneAuthCallback : PhoneAuthProvider.OnVerificationStateChangedCallbacks
 
@@ -94,5 +102,32 @@ open class RxFirebaseAuth {
 
     open fun signInWithCode(verificationId: String, code : String): Maybe<FirebaseUser> {
         return signInWithPhoneAuthCredential(PhoneAuthProvider.getCredential(verificationId, code))
+    }
+
+    open fun updateUserDetails(name : String, image : Bitmap): Completable {
+        return Completable.create{ emitter ->
+            rxFirebaseStorage
+                    .uploadImage(image)
+                    .subscribe({ uri ->
+                        val user = FirebaseAuth.getInstance().currentUser
+
+                        val profileUpdates = UserProfileChangeRequest.Builder()
+                                .setDisplayName(name)
+                                .setPhotoUri(uri)
+                                .build()
+
+                        user!!.updateProfile(profileUpdates)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        emitter.onComplete()
+                                        Log.d(TAG, "User profile updated.")
+                                    }else {
+                                        emitter.onError(RxFirebaseAuthError(task.exception?.localizedMessage!!))
+                                    }
+                                }
+                    }) { exception ->
+                        emitter.onError(RxFirebaseAuthError(exception.localizedMessage))
+                    }
+        }
     }
 }

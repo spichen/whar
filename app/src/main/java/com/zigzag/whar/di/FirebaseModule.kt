@@ -5,6 +5,7 @@ package com.zigzag.whar.di
  */
 
 import com.zigzag.whar.rx.firebase.RxFirebaseAuth
+import com.zigzag.whar.rx.firebase.RxFirebaseStorage
 
 import javax.inject.Singleton
 
@@ -22,6 +23,12 @@ class FirebaseModule {
     @Singleton
     internal fun provideRxFirebaseAuth(): RxFirebaseAuth {
         return RxFirebaseAuth()
+    }
+
+    @Provides
+    @Singleton
+    internal fun provideRxFirebaseStorage(): RxFirebaseStorage {
+        return RxFirebaseStorage()
     }
 
 }

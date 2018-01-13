@@ -12,6 +12,7 @@ import dagger.android.support.DaggerAppCompatActivity
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.zigzag.whar.ui.dashboard.DashboardActivity
 import com.zigzag.whar.ui.login.LoginActivity
+import com.zigzag.whar.ui.profileEdit.ProfileEditActivity
 
 /**
  * Created by salah on 27/12/17.
@@ -68,6 +69,11 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
 
     override fun gotoDashboard() {
         startActivity(Intent(this@BaseActivity,DashboardActivity::class.java))
+        finish()
+    }
+
+    override fun gotoEditProfile() {
+        startActivity(Intent(this@BaseActivity,ProfileEditActivity::class.java))
         finish()
     }
 

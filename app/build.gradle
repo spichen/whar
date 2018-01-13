@@ -51,6 +51,7 @@ dependencies {
     implementation 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7-kotlin:2.0.0'
     implementation 'com.jakewharton.rxbinding2:rxbinding-design-kotlin:2.0.0'
     implementation 'com.jakewharton.rxbinding2:rxbinding-recyclerview-v7-kotlin:2.0.0'
+    implementation 'com.mlsdev.rximagepicker:library:2.0.2'
 
     // anko
     implementation "org.jetbrains.anko:anko:$anko_version"
@@ -69,12 +70,14 @@ dependencies {
     // firebase
     implementation "com.google.firebase:firebase-core:$firebase_version"
     implementation "com.google.firebase:firebase-auth:$firebase_version"
+    implementation "com.google.firebase:firebase-storage:$firebase_version"
 
     implementation "com.google.code.findbugs:jsr305:$jsr305Version"
 
     // ui libs
     //implementation 'br.com.simplepass:loading-button-android:1.11.1'
     implementation 'com.github.thesalah:LoadingButtonAndroid:master-SNAPSHOT'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     // test
     implementation 'com.android.support.test.espresso:espresso-idling-resource:3.0.1'

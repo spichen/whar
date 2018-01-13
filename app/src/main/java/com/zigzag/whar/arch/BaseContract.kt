@@ -12,6 +12,7 @@ interface BaseContract {
     interface View{
         fun logout()
         fun gotoDashboard()
+        fun gotoEditProfile()
     }
 
     interface Presenter<V : BaseContract.View> {

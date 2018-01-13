@@ -8,6 +8,8 @@ import com.zigzag.whar.ui.dashboard.DashboardActivity
 import com.zigzag.whar.ui.dashboard.DashboardActivityModule
 import com.zigzag.whar.ui.login.LoginActivity
 import com.zigzag.whar.ui.login.LoginActivityModule
+import com.zigzag.whar.ui.profileEdit.ProfileEditActivity
+import com.zigzag.whar.ui.profileEdit.ProfileEditActivityModule
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -22,5 +24,9 @@ abstract class ActivityBindingModule {
     @ActivityScoped
     @ContributesAndroidInjector(modules = arrayOf(DashboardActivityModule::class))
     abstract fun dashboardActivity(): DashboardActivity
+
+    @ActivityScoped
+    @ContributesAndroidInjector(modules = arrayOf(ProfileEditActivityModule::class))
+    abstract fun profileEditActivity(): ProfileEditActivity
 
 }

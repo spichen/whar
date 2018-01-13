@@ -3,7 +3,6 @@ package com.zigzag.whar.ui.login
 import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthProvider
 import com.zigzag.whar.R
 import com.zigzag.whar.arch.BasePresenter
 import com.zigzag.whar.rx.firebase.VerificationData
@@ -45,16 +44,13 @@ class LoginActivityPresenter @Inject constructor() : BasePresenter<LoginActivity
     }
 
     override fun verifyCode(code: Number) {
-        rxFirebaseAuth.signInWithCode(verificationData.verificationId, code.toString())
-                    .subscribe({
-                        result: FirebaseUser? ->
-                        Log.d(TAG,"susss")
-                        //view?.onVerified()
-                    }) {
-                        throwable: Throwable? ->
-                        Log.d(TAG,"susss " + throwable?.localizedMessage)
-                        view?.showError(R.string.invalid_code)
-                    }
+        rxFirebaseAuth
+                .signInWithCode(verificationData.verificationId, code.toString())
+                .subscribe({
+                    result: FirebaseUser? ->
+                }) {
+                    view?.showError(R.string.invalid_code)
+                }
     }
 
     override fun signIn(phoneAuthCredential: PhoneAuthCredential) {
@@ -62,7 +58,6 @@ class LoginActivityPresenter @Inject constructor() : BasePresenter<LoginActivity
                 .signInWithPhoneAuthCredential(phoneAuthCredential)
                 .subscribe({
                     result: FirebaseUser? ->
-                    Log.d(TAG,"susss")
                     //view?.onVerified()
                 }) {
                     throwable: Throwable? ->

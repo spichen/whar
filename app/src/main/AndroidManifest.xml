@@ -13,14 +13,20 @@
         <activity
             android:name=".ui.login.LoginActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:windowSoftInputMode="adjustNothing">
-        </activity>
+            android:windowSoftInputMode="adjustNothing"/>
+
+        <activity
+            android:name=".ui.profileEdit.ProfileEditActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+
         <activity android:name=".ui.dashboard.DashboardActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter></activity>
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
