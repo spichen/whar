@@ -27,14 +27,14 @@ import kotlinx.android.synthetic.main.page_phone_number.view.*
 import kotlinx.android.synthetic.main.page_code.view.*
 import android.view.inputmethod.InputMethodManager
 import com.jakewharton.rxbinding2.support.v4.view.pageSelections
-import com.zigzag.whar.common.constants.PHONE_NUMBER
+import com.zigzag.whar.common.Constants.PHONE_NUMBER
 import io.reactivex.disposables.CompositeDisposable
 
 class LoginActivity : BaseActivity<LoginActivityContract.View, LoginActivityContract.Presenter>(), LoginActivityContract.View{
 
     @Inject lateinit var loginActivityPresenter : LoginActivityPresenter
 
-    val TAG = "LoginActivity"
+    val TAG = "LoginActivity p"
     val PAGE_PHONE_NUMBER = 0
     val PAGE_CODE = 1
     var phoneNumberPage : View? = null

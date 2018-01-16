@@ -8,6 +8,7 @@ import android.support.annotation.CallSuper
 import com.google.firebase.auth.FirebaseAuth
 import com.zigzag.whar.di.ActivityScoped
 import com.zigzag.whar.rx.firebase.RxFirebaseAuth
+import com.zigzag.whar.rx.firebase.RxFirebaseStorage
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
@@ -20,6 +21,9 @@ abstract class BasePresenter<V : BaseContract.View> : LifecycleObserver, BaseCon
 
     @Inject
     lateinit var rxFirebaseAuth : RxFirebaseAuth
+
+    @Inject
+    lateinit var rxFirebaseStorage : RxFirebaseStorage
 
     override var stateBundle: Bundle? = Bundle()
 

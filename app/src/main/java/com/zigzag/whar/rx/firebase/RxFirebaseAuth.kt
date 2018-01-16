@@ -1,5 +1,6 @@
 package com.zigzag.whar.rx.firebase
 import android.graphics.Bitmap
+import android.net.Uri
 import android.support.annotation.NonNull
 import com.google.android.gms.tasks.TaskExecutors.MAIN_THREAD
 import com.google.firebase.FirebaseException
@@ -12,21 +13,16 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.AuthResult
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.Maybe
 import javax.inject.Inject
 import com.google.firebase.auth.UserProfileChangeRequest
 import io.reactivex.Completable
 
-
 /**
  * Created by salah on 2/1/18.
  */
-
-/*
-@Suppress("NOTHING_TO_INLINE")
-public inline fun PhoneAuthProvider.rxVerifyPhoneNumber(number: Number) : Observable<Any> = RxFirebaseAuth.phoneAuthProvider(this,number)
-*/
 
 data class VerificationData(val verificationId: String, val token: PhoneAuthProvider.ForceResendingToken)
 
@@ -66,37 +62,37 @@ open class RxFirebaseAuth {
                 }
             }
             PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                    number.toString(),
-                    60,
-                    TimeUnit.SECONDS,
-                    MAIN_THREAD,
-                    phoneAuthCallback)
+                number.toString(),
+                60,
+                TimeUnit.SECONDS,
+                MAIN_THREAD,
+                phoneAuthCallback)
         }
     }
 
     open fun resendCode(number: Number, token: PhoneAuthProvider.ForceResendingToken) {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                number.toString(),
-                60,
-                TimeUnit.SECONDS,
-                MAIN_THREAD,
-                phoneAuthCallback,
-                token)
+            number.toString(),
+            60,
+            TimeUnit.SECONDS,
+            MAIN_THREAD,
+            phoneAuthCallback,
+            token)
     }
 
     open fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential): Maybe<FirebaseUser> {
         return Maybe.create { emitter ->
             FirebaseAuth.getInstance().signInWithCredential(credential)
-                    .addOnCompleteListener(MAIN_THREAD, OnCompleteListener<AuthResult> { task ->
-                        if (task.isSuccessful) {
-                            emitter.onSuccess(task.result.user)
-                        } else {
-                            Log.w(TAG, "signInWithCredential:failure", task.exception)
-                            if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                                emitter.onError(RxFirebaseAuthError())
-                            }
+                .addOnCompleteListener(MAIN_THREAD, OnCompleteListener<AuthResult> { task ->
+                    if (task.isSuccessful) {
+                        emitter.onSuccess(task.result.user)
+                    } else {
+                        Log.w(TAG, "signInWithCredential:failure", task.exception)
+                        if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                            emitter.onError(RxFirebaseAuthError())
                         }
-                    })
+                    }
+                })
         }
     }
 
@@ -104,30 +100,25 @@ open class RxFirebaseAuth {
         return signInWithPhoneAuthCredential(PhoneAuthProvider.getCredential(verificationId, code))
     }
 
-    open fun updateUserDetails(name : String, image : Bitmap): Completable {
-        return Completable.create{ emitter ->
-            rxFirebaseStorage
-                    .uploadImage(image)
-                    .subscribe({ uri ->
-                        val user = FirebaseAuth.getInstance().currentUser
+    open fun updateUserDetails(name : String, image : Uri): Maybe<String> {
+        return Maybe.create{ emitter ->
 
-                        val profileUpdates = UserProfileChangeRequest.Builder()
-                                .setDisplayName(name)
-                                .setPhotoUri(uri)
-                                .build()
+            val user = FirebaseAuth.getInstance().currentUser
 
-                        user!!.updateProfile(profileUpdates)
-                                .addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        emitter.onComplete()
-                                        Log.d(TAG, "User profile updated.")
-                                    }else {
-                                        emitter.onError(RxFirebaseAuthError(task.exception?.localizedMessage!!))
-                                    }
-                                }
-                    }) { exception ->
-                        emitter.onError(RxFirebaseAuthError(exception.localizedMessage))
+            val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .setPhotoUri(image)
+                .build()
+
+            user!!.updateProfile(profileUpdates)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        emitter.onSuccess("updated")
+                        Log.d(TAG, "User profile updated.")
+                    }else {
+                        emitter.onError(RxFirebaseAuthError(task.exception?.localizedMessage!!))
                     }
+                }
         }
     }
 }

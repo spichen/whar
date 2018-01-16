@@ -5,11 +5,12 @@ import com.jakewharton.rxbinding2.view.clicks
 import com.mlsdev.rximagepicker.RxImageConverters
 import com.mlsdev.rximagepicker.RxImagePicker
 import com.mlsdev.rximagepicker.Sources
+import com.salah.rxdatetimepicker.RxDateConverters
+import com.salah.rxdatetimepicker.RxDateTimePicker
 import com.zigzag.whar.R
 import com.zigzag.whar.arch.BaseActivity
 import kotlinx.android.synthetic.main.activity_profile_edit.*
 import javax.inject.Inject
-import com.zigzag.whar.rx.RxDatePicker
 import io.reactivex.Observable
 import java.text.SimpleDateFormat
 
@@ -23,7 +24,6 @@ class ProfileEditActivity : BaseActivity<ProfileEditActivityContract.View, Profi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_edit)
-
         initViews()
         initObservations()
 
@@ -35,35 +35,39 @@ class ProfileEditActivity : BaseActivity<ProfileEditActivityContract.View, Profi
 
     private fun initObservations() {
         profile_image.clicks()
-                .subscribe {
-                    RxImagePicker
-                            .with(this@ProfileEditActivity)
-                            .requestImage(Sources.CAMERA)
-                            .flatMap{ uri -> RxImageConverters.uriToBitmap(this@ProfileEditActivity, uri)
-                            }
-                            .subscribe{ bitmap ->
-                                profile_image.setImageBitmap(bitmap)
-                            }
-                }
-        et_dob.clicks()
-                .subscribe{
-                    RxDatePicker(this@ProfileEditActivity)
-                            .showDatePicker()
-                            .flatMap { calender -> Observable.just(SimpleDateFormat("MM.dd.yyyy").format(calender.time).toString())
-                            }
-                            .subscribe { date ->
-                                et_dob.setText(date)
-                            }
+            .subscribe {
+                // @TODO improve image picker - add crop
+                RxImagePicker
+                    .with(this@ProfileEditActivity)
+                    .requestImage(Sources.CAMERA)
+                    .flatMap{ uri -> RxImageConverters.uriToBitmap(this@ProfileEditActivity, uri)
+                    }
+                    .subscribe{ bitmap ->
+                        profile_image.setImageBitmap(bitmap)
+                    }
+            }
 
-                }
+        et_dob.clicks()
+            .subscribe {
+                RxDateTimePicker
+                    .with(this@ProfileEditActivity)
+                    .pickDateOnly()
+                    .show()
+                    .flatMap { date ->
+                        RxDateConverters.toString(date,"dd MMM yyyy")
+                    }
+                    .subscribe { date ->
+                        et_dob.setText(date)
+                    }
+            }
 
         btn_submit.clicks()
-                .subscribe {
-                    startSubmitButtonAnimation()
-                    profile_image.isDrawingCacheEnabled = true
-                    profile_image.buildDrawingCache()
-                    presenter.updateUserDetails(et_display_name.text.toString(),profile_image.drawingCache)
-                }
+            .subscribe {
+                startSubmitButtonAnimation()
+                profile_image.isDrawingCacheEnabled = true
+                profile_image.buildDrawingCache()
+                presenter.updateUserDetails(et_display_name.text.toString(),profile_image.drawingCache)
+            }
     }
 
     override fun startSubmitButtonAnimation() {

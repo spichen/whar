@@ -12,15 +12,14 @@ import java.io.ByteArrayOutputStream
  */
 open class RxFirebaseStorage {
 
-    var storageRef = FirebaseStorage.getInstance().reference.child("profile_images")
+    var storageRef = FirebaseStorage.getInstance().reference
 
-    open fun uploadImage(image: Bitmap): Maybe<Uri> {
+    open fun uploadImage(folder : String, filename : String, image: Bitmap): Maybe<Uri> {
         return Maybe.create { emitter ->
             val baos = ByteArrayOutputStream()
             image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             val data = baos.toByteArray()
-
-            val uploadTask = storageRef.putBytes(data)
+            val uploadTask = storageRef.child(folder).child(filename).putBytes(data)
             uploadTask.addOnFailureListener( { exception ->
                 emitter.onError(RxFirebaseStorageError(exception.localizedMessage))
             }).addOnSuccessListener({ taskSnapshot ->

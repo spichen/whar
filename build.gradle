@@ -20,6 +20,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url "https://dl.bintray.com/salah49/maven" }
         maven { url "http://dl.bintray.com/jetbrains/spek" }
         maven { url 'https://jitpack.io' }
     }
