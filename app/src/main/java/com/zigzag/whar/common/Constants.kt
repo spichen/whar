@@ -5,5 +5,7 @@ package com.zigzag.whar.common
  */
 object Constants {
     val PHONE_NUMBER = "phone_number"
+    val PROFILE_IMAGE = "profile_image"
+
     val PROFILE_IMAGE_FOLDER = "profile_image"
 }

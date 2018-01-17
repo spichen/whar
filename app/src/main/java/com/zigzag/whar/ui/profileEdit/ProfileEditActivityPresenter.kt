@@ -15,13 +15,17 @@ class ProfileEditActivityPresenter @Inject constructor() : BasePresenter<Profile
 
     val TAG = "ProfileEditActivityPresenter"
 
-    override fun updateUserDetails(name: String, image: Bitmap) {
+    // @TODO add dob in firestore
+    override fun updateUserDetails(name: String, dob: String, image: Bitmap) {
         rxFirebaseStorage
                 .uploadImage(PROFILE_IMAGE_FOLDER,FirebaseAuth.getInstance().currentUser?.uid!!,image)
                 .observeOn(Schedulers.io())
                 .flatMap { uri -> rxFirebaseAuth.updateUserDetails(name, uri) }
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe{ view?.revertSubmitButtonAnimation() }
+                .subscribe{
+                    view?.revertSubmitButtonAnimation()
+                    view?.onComplete()
+                }
     }
 
 }

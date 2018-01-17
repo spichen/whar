@@ -8,12 +8,15 @@ import com.zigzag.whar.arch.BaseContract
  */
 class ProfileEditActivityContract {
     interface View : BaseContract.View {
+        fun disableSubmitButton()
+        fun enableSubmitButton()
         fun startSubmitButtonAnimation()
         fun revertSubmitButtonAnimation()
+        fun onComplete()
     }
 
     interface Presenter : BaseContract.Presenter<View> {
-        fun updateUserDetails(name : String, image : Bitmap)
+        fun updateUserDetails(name : String, dob : String, image : Bitmap)
     }
 
 }
