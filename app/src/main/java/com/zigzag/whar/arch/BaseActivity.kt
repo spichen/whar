@@ -13,6 +13,8 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.zigzag.whar.ui.dashboard.DashboardActivity
 import com.zigzag.whar.ui.login.LoginActivity
 import com.zigzag.whar.ui.profileEdit.ProfileEditActivity
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 
 /**
  * Created by salah on 27/12/17.
@@ -24,6 +26,11 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
     private val lifecycleRegistry = LifecycleRegistry(this)
     protected lateinit var presenter: P
     private var isPresenterCreated = false
+
+    var compositeDisposables : CompositeDisposable = CompositeDisposable()
+
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun Disposable.track() = compositeDisposables.add(this)
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +57,7 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
         super.onDestroy()
         presenter.detachLifecycle(lifecycle)
         presenter.detachView()
+        compositeDisposables.clear()
     }
 
     protected abstract fun getPresenterImpl(): P

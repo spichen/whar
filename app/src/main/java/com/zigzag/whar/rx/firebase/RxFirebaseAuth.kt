@@ -1,5 +1,5 @@
 package com.zigzag.whar.rx.firebase
-import android.graphics.Bitmap
+
 import android.net.Uri
 import android.support.annotation.NonNull
 import com.google.android.gms.tasks.TaskExecutors.MAIN_THREAD
@@ -13,10 +13,8 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.AuthResult
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.Maybe
-import javax.inject.Inject
 import com.google.firebase.auth.UserProfileChangeRequest
 import io.reactivex.Completable
 
@@ -24,14 +22,9 @@ import io.reactivex.Completable
  * Created by salah on 2/1/18.
  */
 
-data class VerificationData(val verificationId: String, val token: PhoneAuthProvider.ForceResendingToken)
-
 open class RxFirebaseAuth {
 
     val TAG = "RxFirebaseAuth"
-
-    @Inject
-    lateinit var rxFirebaseStorage : RxFirebaseStorage
 
     lateinit var phoneAuthCallback : PhoneAuthProvider.OnVerificationStateChangedCallbacks
 
@@ -80,12 +73,12 @@ open class RxFirebaseAuth {
             token)
     }
 
-    open fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential): Maybe<FirebaseUser> {
-        return Maybe.create { emitter ->
+    open fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential): Completable {
+        return Completable.create { emitter ->
             FirebaseAuth.getInstance().signInWithCredential(credential)
                 .addOnCompleteListener(MAIN_THREAD, OnCompleteListener<AuthResult> { task ->
                     if (task.isSuccessful) {
-                        emitter.onSuccess(task.result.user)
+                        emitter.onComplete()
                     } else {
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
                         if (task.exception is FirebaseAuthInvalidCredentialsException) {
@@ -96,7 +89,7 @@ open class RxFirebaseAuth {
         }
     }
 
-    open fun signInWithCode(verificationId: String, code : String): Maybe<FirebaseUser> {
+    open fun signInWithCode(verificationId: String, code : String): Completable {
         return signInWithPhoneAuthCredential(PhoneAuthProvider.getCredential(verificationId, code))
     }
 
@@ -122,3 +115,6 @@ open class RxFirebaseAuth {
         }
     }
 }
+
+data class VerificationData(val verificationId: String, val token: PhoneAuthProvider.ForceResendingToken)
+

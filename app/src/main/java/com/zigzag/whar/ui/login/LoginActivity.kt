@@ -1,7 +1,6 @@
 package com.zigzag.whar.ui.login
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -20,7 +19,6 @@ import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import com.zigzag.whar.ui.dashboard.DashboardActivity
 import com.zigzag.whar.common.helpers.ViewHelpers.whiteLongSnackBar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.page_phone_number.view.*
@@ -28,19 +26,19 @@ import kotlinx.android.synthetic.main.page_code.view.*
 import android.view.inputmethod.InputMethodManager
 import com.jakewharton.rxbinding2.support.v4.view.pageSelections
 import com.zigzag.whar.common.Constants.PHONE_NUMBER
-import io.reactivex.disposables.CompositeDisposable
 
 class LoginActivity : BaseActivity<LoginActivityContract.View, LoginActivityContract.Presenter>(), LoginActivityContract.View{
 
     @Inject lateinit var loginActivityPresenter : LoginActivityPresenter
 
-    val TAG = "LoginActivity p"
-    val PAGE_PHONE_NUMBER = 0
-    val PAGE_CODE = 1
+    companion object {
+        val PAGE_PHONE_NUMBER = 0
+        val PAGE_CODE = 1
+    }
+
     var phoneNumberPage : View? = null
     var codePage : View? = null
-    var phoneNumber : CharSequence? = null
-    var compositeDisposable : CompositeDisposable = CompositeDisposable()
+    private var phoneNumber : CharSequence? = null
 
     override fun getPresenterImpl(): LoginActivityContract.Presenter = loginActivityPresenter
 
@@ -62,96 +60,94 @@ class LoginActivity : BaseActivity<LoginActivityContract.View, LoginActivityCont
     }
 
     private fun initObservation() {
-        compositeDisposable.addAll(
-                phoneNumberPage?.et_number?.textChanges()
-                    ?.subscribe { query ->
-                        phoneNumber = query
-                        validateSubmitButton()
-                    },
-                Observable.merge(phoneNumberPage?.et_number?.editorActions(),codePage?.et_code_6?.editorActions(), btn_submit.clicks())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .map{
-                        if(vp_container.currentItem == PAGE_PHONE_NUMBER) {
-                            phoneNumberPage?.s_country_code?.selectedItem.toString().split("+")[1] + phoneNumberPage?.et_number?.text.toString()
-                        }else{
-                            getUserInputtedCode().toString()
-                        }
-                    }
-                    .subscribe { query ->
-                        hideKeyboard()
-                        if(vp_container.currentItem == PAGE_PHONE_NUMBER){
-                            try {
-                                startSubmitButtonAnimation()
-                                presenter.requestCode(query.toLong())
-                            } catch (e : Exception){
-                                phoneNumberPage?.et_number?.error = getString(R.string.invalid_phone_number)
-                                revertSubmitButton()
-                            }
-                        }else{
-                            if(validateCode()){
-                                startSubmitButtonAnimation()
-                                presenter.verifyCode(query.toLong())
-                            }else{
-                                showError(R.id.incomplete_code)
-                                revertSubmitButton()
-                            }
-                        }
-                    },
-                codePage?.tv_phone_number?.clicks()
-                    ?.subscribe{
-                        displayPhoneNumberInputPage()
-                    },
-                codePage?.et_code_1?.textChanges()
-                    ?.subscribe{ query ->
-                        validateSubmitButton()
-                        if(query.length == 1){
-                            codePage?.et_code_2?.requestFocus()
-                        }
-                    },
-                codePage?.et_code_2?.textChanges()
-                    ?.subscribe{ query ->
-                        validateSubmitButton()
-                        if(query.length == 1){
-                            codePage?.et_code_3?.requestFocus()
-                        }
-                    },
-                codePage?.et_code_3?.textChanges()
-                    ?.subscribe{ query ->
-                        validateSubmitButton()
-                        if(query.length == 1){
-                            codePage?.et_code_4?.requestFocus()
-                        }
-                    },
-                codePage?.et_code_4?.textChanges()
-                    ?.subscribe{ query ->
-                        validateSubmitButton()
-                        if(query.length == 1){
-                            codePage?.et_code_5?.requestFocus()
-                        }
-                    },
-                codePage?.et_code_5?.textChanges()
-                    ?.subscribe{ query ->
-                        validateSubmitButton()
-                        if(query.length == 1){
-                            codePage?.et_code_6?.requestFocus()
-                        }
-                    },
-                codePage?.et_code_6?.textChanges()
-                    ?.subscribe{
-                        validateSubmitButton()
-                    },
-                tv_resend?.clicks()
-                    ?.subscribe{
-                        presenter.resendCode()
-                        hideKeyboard()
-                    },
-                vp_container.pageSelections()
-                    .subscribe{ page ->
+        phoneNumberPage?.et_number?.textChanges()
+            ?.subscribe { query ->
+                phoneNumber = query
+                validateSubmitButton()
+            }?.track()
+        Observable.merge(phoneNumberPage?.et_number?.editorActions(),codePage?.et_code_6?.editorActions(), btn_submit.clicks())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map{
+                if(vp_container.currentItem == PAGE_PHONE_NUMBER) {
+                    phoneNumberPage?.s_country_code?.selectedItem.toString().split("+")[1] + phoneNumberPage?.et_number?.text.toString()
+                }else{
+                    getUserInputtedCode().toString()
+                }
+            }
+            .subscribe { query ->
+                hideKeyboard()
+                if(vp_container.currentItem == PAGE_PHONE_NUMBER){
+                    try {
+                        startSubmitButtonAnimation()
+                        presenter.requestCode(query.toLong())
+                    } catch (e : Exception){
+                        phoneNumberPage?.et_number?.error = getString(R.string.invalid_phone_number)
                         revertSubmitButton()
-                        validateSubmitButton()
-                        updateUI(page)
                     }
-                )
+                }else{
+                    if(validateCode()){
+                        startSubmitButtonAnimation()
+                        presenter.verifyCode(query.toLong())
+                    }else{
+                        showError(R.id.incomplete_code)
+                        revertSubmitButton()
+                    }
+                }
+            }.track()
+        codePage?.tv_phone_number?.clicks()
+            ?.subscribe{
+                displayPhoneNumberInputPage()
+            }?.track()
+        codePage?.et_code_1?.textChanges()
+            ?.subscribe{ query ->
+                validateSubmitButton()
+                if(query.length == 1){
+                    codePage?.et_code_2?.requestFocus()
+                }
+            }?.track()
+        codePage?.et_code_2?.textChanges()
+            ?.subscribe{ query ->
+                validateSubmitButton()
+                if(query.length == 1){
+                    codePage?.et_code_3?.requestFocus()
+                }
+            }?.track()
+        codePage?.et_code_3?.textChanges()
+            ?.subscribe{ query ->
+                validateSubmitButton()
+                if(query.length == 1){
+                    codePage?.et_code_4?.requestFocus()
+                }
+            }?.track()
+        codePage?.et_code_4?.textChanges()
+            ?.subscribe{ query ->
+                validateSubmitButton()
+                if(query.length == 1){
+                    codePage?.et_code_5?.requestFocus()
+                }
+            }?.track()
+        codePage?.et_code_5?.textChanges()
+            ?.subscribe{ query ->
+                validateSubmitButton()
+                if(query.length == 1){
+                    codePage?.et_code_6?.requestFocus()
+                }
+            }?.track()
+        codePage?.et_code_6?.textChanges()
+            ?.subscribe {
+                validateSubmitButton()
+            }?.track()
+        tv_resend?.clicks()
+            ?.subscribe{
+                presenter.resendCode()
+                hideKeyboard()
+            }?.track()
+        vp_container.pageSelections()
+            .subscribe{ page ->
+                revertSubmitButton()
+                validateSubmitButton()
+                updateUI(page)
+            }?.track()
     }
 
     override fun revertSubmitButton() {
@@ -331,7 +327,6 @@ class LoginActivity : BaseActivity<LoginActivityContract.View, LoginActivityCont
 
     override fun onDestroy() {
         super.onDestroy()
-        compositeDisposable.clear()
         btn_submit.dispose()
     }
 

@@ -12,19 +12,17 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "com.zigzag.whar.MockJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-
     }
-
     testOptions {
         animationsDisabled = true
     }
-
 }
 
 ext {
@@ -72,13 +70,18 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$firebase_version"
     implementation "com.google.firebase:firebase-auth:$firebase_version"
     implementation "com.google.firebase:firebase-storage:$firebase_version"
+    implementation "com.google.firebase:firebase-firestore:$firebase_version"
 
+    // blaa
     implementation "com.google.code.findbugs:jsr305:$jsr305Version"
 
     // ui libs
     //implementation 'br.com.simplepass:loading-button-android:1.11.1'
     implementation 'com.github.thesalah:LoadingButtonAndroid:master-SNAPSHOT'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    // utils
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 
     // test
     implementation 'com.android.support.test.espresso:espresso-idling-resource:3.0.1'

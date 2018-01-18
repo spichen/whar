@@ -10,24 +10,12 @@ import org.junit.runner.RunWith
 import org.junit.Rule
 import android.support.test.espresso.intent.Intents.intended
 import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
-import com.zigzag.whar.ui.dashboard.DashboardActivity
 import android.support.test.espresso.intent.rule.IntentsTestRule
-import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.Espresso.onData
 import android.support.test.espresso.action.ViewActions.*
 import org.hamcrest.CoreMatchers.*
-import android.support.test.InstrumentationRegistry
-import android.support.test.uiautomator.UiDevice
-import android.support.test.uiautomator.UiSelector
-import android.support.test.uiautomator.Until.findObject
-import android.support.test.uiautomator.UiObject
-import android.support.test.uiautomator.Until
 import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
-import android.support.test.espresso.Espresso.onView
-import android.support.test.uiautomator.Until.findObject
-
-
-
+import com.zigzag.whar.ui.profileEdit.ProfileEditActivity
 
 /**
  * Created by salah on 30/12/17.
@@ -48,7 +36,6 @@ class LoginActivityTest {
         onView(withId(R.id.et_number)).perform(typeText("9895"))
         onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
     }
-
 
     @Test
     fun checkIfNumberEditTapIsRevertingToNumberField() {
@@ -93,7 +80,7 @@ class LoginActivityTest {
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("IN +91"))).perform(click())
         onView(withId(R.id.et_number)).perform(typeText("9895940989"))
         onView(withId(R.id.btn_submit)).perform(click())
-        intended(hasComponent(DashboardActivity::class.java.name))
+        intended(hasComponent(ProfileEditActivity::class.java.name))
     }
 
     @Test
@@ -109,7 +96,7 @@ class LoginActivityTest {
         onView(withId(R.id.et_code_5)).perform(typeText("5"))
         onView(withId(R.id.et_code_6)).perform(typeText("6"))
         onView(withId(R.id.btn_submit)).perform(click())
-        intended(hasComponent(DashboardActivity::class.java.name))
+        intended(hasComponent(ProfileEditActivity::class.java.name))
     }
 
     @Test

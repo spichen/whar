@@ -1,7 +1,6 @@
 package com.zigzag.whar.ui.login
 
 import android.util.Log
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PhoneAuthCredential
 import com.zigzag.whar.R
 import com.zigzag.whar.arch.BasePresenter
@@ -35,7 +34,7 @@ class LoginActivityPresenter @Inject constructor() : BasePresenter<LoginActivity
                 }) {
                     throwable: Throwable? ->
                         view?.showError(throwable!!.localizedMessage.split(".")[0])
-                }
+                }.track()
     }
 
     override fun resendCode() {
@@ -47,22 +46,21 @@ class LoginActivityPresenter @Inject constructor() : BasePresenter<LoginActivity
         rxFirebaseAuth
                 .signInWithCode(verificationData.verificationId, code.toString())
                 .subscribe({
-                    result: FirebaseUser? ->
+                    Log.d(TAG,"Code verified")
                 }) {
                     view?.showError(R.string.invalid_code)
-                }
+                }.track()
     }
 
     override fun signIn(phoneAuthCredential: PhoneAuthCredential) {
         rxFirebaseAuth
                 .signInWithPhoneAuthCredential(phoneAuthCredential)
                 .subscribe({
-                    result: FirebaseUser? ->
-                    //view?.onVerified()
+                    Log.d(TAG,"Signed In ")
                 }) {
                     throwable: Throwable? ->
-                    Log.d(TAG,"susss " + throwable?.localizedMessage)
+                    Log.e(TAG,throwable?.localizedMessage)
                     view?.showError(R.string.invalid_code)
-                }
+                }.track()
     }
 }

@@ -8,7 +8,9 @@ import android.support.annotation.CallSuper
 import com.google.firebase.auth.FirebaseAuth
 import com.zigzag.whar.di.ActivityScoped
 import com.zigzag.whar.rx.firebase.RxFirebaseAuth
+import com.zigzag.whar.rx.firebase.RxFirebaseFirestore
 import com.zigzag.whar.rx.firebase.RxFirebaseStorage
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
@@ -24,6 +26,14 @@ abstract class BasePresenter<V : BaseContract.View> : LifecycleObserver, BaseCon
 
     @Inject
     lateinit var rxFirebaseStorage : RxFirebaseStorage
+
+    @Inject
+    lateinit var rxFirebaseFirestore : RxFirebaseFirestore
+
+    var compositeDisposables : CompositeDisposable = CompositeDisposable()
+
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun Disposable.track() = compositeDisposables.add(this)
 
     override var stateBundle: Bundle? = Bundle()
 
@@ -55,6 +65,7 @@ abstract class BasePresenter<V : BaseContract.View> : LifecycleObserver, BaseCon
         if (stateBundle != null && !stateBundle!!.isEmpty) {
             stateBundle!!.clear()
         }
+        compositeDisposables.clear()
         authObserver.dispose()
     }
 

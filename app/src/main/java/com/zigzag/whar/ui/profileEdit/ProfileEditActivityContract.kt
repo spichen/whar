@@ -1,6 +1,6 @@
 package com.zigzag.whar.ui.profileEdit
 
-import android.graphics.Bitmap
+import android.net.Uri
 import com.zigzag.whar.arch.BaseContract
 
 /**
@@ -16,7 +16,7 @@ class ProfileEditActivityContract {
     }
 
     interface Presenter : BaseContract.Presenter<View> {
-        fun updateUserDetails(name : String, dob : String, image : Bitmap)
+        fun updateUserDetails(firstName : String, lastName : String, dob : String, image : Uri)
     }
 
 }

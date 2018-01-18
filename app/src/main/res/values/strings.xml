@@ -15,5 +15,7 @@
     <string name="update">Update</string>
     <string name="display_name_placeholder">Your Name</string>
     <string name="date_of_birth_placeholder">Date of birth</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
 
 </resources>

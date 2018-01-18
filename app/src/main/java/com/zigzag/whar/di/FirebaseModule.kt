@@ -1,10 +1,7 @@
 package com.zigzag.whar.di
 
-/**
- * Created by salah on 3/1/18.
- */
-
 import com.zigzag.whar.rx.firebase.RxFirebaseAuth
+import com.zigzag.whar.rx.firebase.RxFirebaseFirestore
 import com.zigzag.whar.rx.firebase.RxFirebaseStorage
 
 import javax.inject.Singleton
@@ -29,6 +26,12 @@ class FirebaseModule {
     @Singleton
     internal fun provideRxFirebaseStorage(): RxFirebaseStorage {
         return RxFirebaseStorage()
+    }
+
+    @Provides
+    @Singleton
+    internal fun provideRxFirebaseFirestore(): RxFirebaseFirestore {
+        return RxFirebaseFirestore()
     }
 
 }
