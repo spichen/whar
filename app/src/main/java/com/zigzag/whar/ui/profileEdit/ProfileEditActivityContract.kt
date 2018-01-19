@@ -16,7 +16,8 @@ class ProfileEditActivityContract {
     }
 
     interface Presenter : BaseContract.Presenter<View> {
-        fun updateUserDetails(firstName : String, lastName : String, dob : String, image : Uri)
+        fun updateUserDetails(firstName : String, lastName : String, dob : String, image : Uri?)
+        fun updateUserDetails(firstName : String, lastName : String, dob : String)
     }
 
 }

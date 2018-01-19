@@ -18,9 +18,10 @@ import com.squareup.picasso.Picasso
 import com.zigzag.whar.ui.dashboard.DashboardActivity
 
 class ProfileEditActivity : BaseActivity<ProfileEditActivityContract.View, ProfileEditActivityContract.Presenter>(), ProfileEditActivityContract.View{
+
     @Inject lateinit var profileEditActivityPresenter : ProfileEditActivityPresenter
 
-    private lateinit var profileImageUri : Uri
+    private var profileImageUri : Uri? = null
 
     override fun getPresenterImpl(): ProfileEditActivityContract.Presenter = profileEditActivityPresenter
 
@@ -84,12 +85,18 @@ class ProfileEditActivity : BaseActivity<ProfileEditActivityContract.View, Profi
         btn_submit.clicks()
             .subscribe {
                 startSubmitButtonAnimation()
-                profile_image.isDrawingCacheEnabled = true
-                profile_image.buildDrawingCache()
-                presenter.updateUserDetails(et_first_name.text.toString(),
-                        et_last_name.text.toString(),
-                        et_dob.text.toString(),
-                        profileImageUri)
+                if(profileImageUri != null){
+                    presenter.updateUserDetails(
+                            et_first_name.text.toString(),
+                            et_last_name.text.toString(),
+                            et_dob.text.toString(),
+                            profileImageUri)
+                }else{
+                    presenter.updateUserDetails(
+                            et_first_name.text.toString(),
+                            et_last_name.text.toString(),
+                            et_dob.text.toString())
+                }
             }.track()
     }
 

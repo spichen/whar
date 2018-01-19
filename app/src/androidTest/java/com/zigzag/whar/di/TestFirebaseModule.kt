@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
@@ -33,7 +34,10 @@ class TestFirebaseModule {
     internal fun provideRxFirebaseAuth(): RxFirebaseAuth {
         val credential = Mockito.mock(PhoneAuthCredential::class.java)
         val forceResendToken = Mockito.mock(PhoneAuthProvider.ForceResendingToken::class.java)
-        val firebaseUser = Mockito.mock(FirebaseUser::class.java)
+        val firebaseUser = mock<FirebaseUser> {
+            on { uid } doReturn "123abc"
+        }
+
         val loggedInFirebaseAuth = mock<FirebaseAuth>{
             on { currentUser } doReturn firebaseUser
         }
@@ -61,6 +65,9 @@ class TestFirebaseModule {
                     }
                 }
             }
+            on { updateUserDetails("Sal Sam") } doReturn Maybe.create<String> { emitter ->
+                emitter.onSuccess("Updated")
+            }
         }
     }
 
@@ -80,12 +87,12 @@ class TestFirebaseModule {
     internal fun provideRxFirebaseFirestore(): RxFirebaseFirestore {
 
         val userData = HashMap<String,Any>()
-        userData["firstName"] = "sal"
-        userData["lastName"] = "sam"
+        userData["firstName"] = "Sal"
+        userData["lastName"] = "Sam"
         userData["dateOfBirth"] = "28 May 1993"
 
         return mock<RxFirebaseFirestore> {
-            on { add("col","doc", userData) } doAnswer {
+            on { add(any<String>(), any<String>(), any<HashMap<String,Any>>()) } doAnswer {
                 Completable.complete()
             }
         }

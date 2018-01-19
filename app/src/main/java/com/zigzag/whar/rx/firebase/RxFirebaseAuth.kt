@@ -93,15 +93,21 @@ open class RxFirebaseAuth {
         return signInWithPhoneAuthCredential(PhoneAuthProvider.getCredential(verificationId, code))
     }
 
-    open fun updateUserDetails(name : String, image : Uri): Maybe<String> {
+    open fun updateUserDetails(name : String, image : Uri? = null): Maybe<String> {
         return Maybe.create{ emitter ->
 
             val user = FirebaseAuth.getInstance().currentUser
 
-            val profileUpdates = UserProfileChangeRequest.Builder()
-                .setDisplayName(name)
-                .setPhotoUri(image)
-                .build()
+            val profileUpdates =
+                    if(image!=null)
+                        UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        .setPhotoUri(image)
+                        .build()
+                    else
+                        UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        .build()
 
             user!!.updateProfile(profileUpdates)
                 .addOnCompleteListener { task ->
