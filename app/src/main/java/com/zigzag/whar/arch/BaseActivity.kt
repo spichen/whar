@@ -1,7 +1,6 @@
 package com.zigzag.whar.arch
 
-import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.ViewModelProviders
+import android.arch.lifecycle.*
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -20,7 +19,7 @@ import io.reactivex.disposables.Disposable
  * Created by salah on 27/12/17.
  */
 
-abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>> : DaggerAppCompatActivity(), BaseContract.View {
+abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>> : DaggerAppCompatActivity(), BaseContract.View{
 
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
     private val lifecycleRegistry = LifecycleRegistry(this)
@@ -61,6 +60,7 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
     }
 
     protected abstract fun getPresenterImpl(): P
+
 
     fun hideKeyboard(){
         val view = this.currentFocus

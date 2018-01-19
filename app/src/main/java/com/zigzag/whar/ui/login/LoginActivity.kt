@@ -27,9 +27,9 @@ import android.view.inputmethod.InputMethodManager
 import com.jakewharton.rxbinding2.support.v4.view.pageSelections
 import com.zigzag.whar.common.Constants.PHONE_NUMBER
 
-class LoginActivity : BaseActivity<LoginActivityContract.View, LoginActivityContract.Presenter>(), LoginActivityContract.View{
+class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(), LoginContract.View{
 
-    @Inject lateinit var loginActivityPresenter : LoginActivityPresenter
+    @Inject lateinit var loginActivityPresenter : LoginPresenter
 
     companion object {
         val PAGE_PHONE_NUMBER = 0
@@ -40,7 +40,7 @@ class LoginActivity : BaseActivity<LoginActivityContract.View, LoginActivityCont
     var codePage : View? = null
     private var phoneNumber : CharSequence? = null
 
-    override fun getPresenterImpl(): LoginActivityContract.Presenter = loginActivityPresenter
+    override fun getPresenterImpl(): LoginContract.Presenter = loginActivityPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

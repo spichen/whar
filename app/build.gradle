@@ -33,6 +33,9 @@ ext {
     firebase_version = '11.8.0'
     mockito_version = '2.13.0'
     espresso_version = '3.0.1'
+    guava_version = '18.0'
+    play_services_version = '11.8.0'
+    rxlifecycle_version = '2.2.1'
 }
 
 dependencies {
@@ -52,12 +55,24 @@ dependencies {
     implementation 'com.jakewharton.rxbinding2:rxbinding-recyclerview-v7-kotlin:2.0.0'
     implementation 'com.mlsdev.rximagepicker:library:2.0.2'
     implementation 'com.salah.rxdatetimepicker:rxdatetimepicker:1.0.1'
+    implementation 'pl.charmas.android:android-reactive-location2:2.1@aar'
+    implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
+    implementation "com.trello.rxlifecycle2:rxlifecycle:$rxlifecycle_version"
+    implementation "com.trello.rxlifecycle2:rxlifecycle-android:$rxlifecycle_version"
+    implementation "com.trello.rxlifecycle2:rxlifecycle-android-lifecycle:$rxlifecycle_version"
+    implementation "com.trello.rxlifecycle2:rxlifecycle-kotlin:$rxlifecycle_version"
+    implementation "com.trello.rxlifecycle2:rxlifecycle-android-lifecycle-kotlin:$rxlifecycle_version"
+
+    // play services
+    implementation "com.google.android.gms:play-services-location:$play_services_version"
+    implementation "com.google.android.gms:play-services-places:$play_services_version"
 
     // anko
     implementation "org.jetbrains.anko:anko:$anko_version"
     implementation "org.jetbrains.anko:anko-design:$anko_version"
 
     // android arch
+    implementation 'com.android.support:support-v4:26.1.0'
     kapt "android.arch.lifecycle:compiler:$arch_version"
     implementation "android.arch.lifecycle:extensions:$arch_version"
 
@@ -75,6 +90,7 @@ dependencies {
 
     // blaa
     implementation "com.google.code.findbugs:jsr305:$jsr305Version"
+    implementation "com.google.guava:guava:$guava_version"
 
     // ui libs
     //implementation 'br.com.simplepass:loading-button-android:1.11.1'
@@ -95,7 +111,7 @@ dependencies {
 
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_version"
     androidTestImplementation "com.android.support.test.espresso:espresso-intents:$espresso_version"
-    androidTestImplementation ("com.android.support.test.espresso:espresso-contrib:$espresso_version") {
+    androidTestImplementation("com.android.support.test.espresso:espresso-contrib:$espresso_version") {
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'design'

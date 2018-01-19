@@ -7,7 +7,7 @@ import com.zigzag.whar.arch.BaseContract
  * Created by salah on 30/12/17.
  */
 
-class LoginActivityContract {
+class LoginContract {
     interface View : BaseContract.View {
         fun showError(error: String)
         fun showError(error: Int)

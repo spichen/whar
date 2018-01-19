@@ -6,7 +6,8 @@ import com.zigzag.whar.arch.BaseContract
 /**
  * Created by salah on 13/1/18.
  */
-class ProfileEditActivityContract {
+
+class ProfileEditContract {
     interface View : BaseContract.View {
         fun disableSubmitButton()
         fun enableSubmitButton()
@@ -19,5 +20,4 @@ class ProfileEditActivityContract {
         fun updateUserDetails(firstName : String, lastName : String, dob : String, image : Uri?)
         fun updateUserDetails(firstName : String, lastName : String, dob : String)
     }
-
 }

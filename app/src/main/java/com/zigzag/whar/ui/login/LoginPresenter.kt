@@ -11,9 +11,9 @@ import javax.inject.Inject
  * Created by salah on 30/12/17.
  */
 
-class LoginActivityPresenter @Inject constructor() : BasePresenter<LoginActivityContract.View>(), LoginActivityContract.Presenter  {
+class LoginPresenter @Inject constructor() : BasePresenter<LoginContract.View>(), LoginContract.Presenter  {
 
-    val TAG = "LoginActivityPresenter"
+    val TAG = "LoginPresenter"
 
     lateinit var verificationData : VerificationData
 

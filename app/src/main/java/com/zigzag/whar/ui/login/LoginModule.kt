@@ -9,10 +9,10 @@ import dagger.Module
  */
 
 @Module
-abstract class LoginActivityModule {
+abstract class LoginModule {
 
     @ActivityScoped
     @Binds
-    internal abstract fun loginActivityPresenter(presenter: LoginActivityPresenter): LoginActivityContract.Presenter
+    internal abstract fun loginActivityPresenter(presenter: LoginPresenter): LoginContract.Presenter
 
 }

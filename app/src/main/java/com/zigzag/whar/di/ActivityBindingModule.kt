@@ -5,11 +5,11 @@ package com.zigzag.whar.di
  */
 
 import com.zigzag.whar.ui.dashboard.DashboardActivity
-import com.zigzag.whar.ui.dashboard.DashboardActivityModule
+import com.zigzag.whar.ui.dashboard.DashboardModule
 import com.zigzag.whar.ui.login.LoginActivity
-import com.zigzag.whar.ui.login.LoginActivityModule
+import com.zigzag.whar.ui.login.LoginModule
 import com.zigzag.whar.ui.profileEdit.ProfileEditActivity
-import com.zigzag.whar.ui.profileEdit.ProfileEditActivityModule
+import com.zigzag.whar.ui.profileEdit.ProfileEditModule
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -18,15 +18,15 @@ import dagger.android.ContributesAndroidInjector
 abstract class ActivityBindingModule {
 
     @ActivityScoped
-    @ContributesAndroidInjector(modules = arrayOf(LoginActivityModule::class))
+    @ContributesAndroidInjector(modules = arrayOf(LoginModule::class))
     abstract fun loginActivity(): LoginActivity
 
     @ActivityScoped
-    @ContributesAndroidInjector(modules = arrayOf(DashboardActivityModule::class))
+    @ContributesAndroidInjector(modules = arrayOf(DashboardModule::class))
     abstract fun dashboardActivity(): DashboardActivity
 
     @ActivityScoped
-    @ContributesAndroidInjector(modules = arrayOf(ProfileEditActivityModule::class))
+    @ContributesAndroidInjector(modules = arrayOf(ProfileEditModule::class))
     abstract fun profileEditActivity(): ProfileEditActivity
 
 }

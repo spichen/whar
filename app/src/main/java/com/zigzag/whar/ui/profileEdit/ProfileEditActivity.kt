@@ -17,13 +17,13 @@ import com.jakewharton.rxbinding2.widget.editorActions
 import com.squareup.picasso.Picasso
 import com.zigzag.whar.ui.dashboard.DashboardActivity
 
-class ProfileEditActivity : BaseActivity<ProfileEditActivityContract.View, ProfileEditActivityContract.Presenter>(), ProfileEditActivityContract.View{
+class ProfileEditActivity : BaseActivity<ProfileEditContract.View, ProfileEditContract.Presenter>(), ProfileEditContract.View{
 
-    @Inject lateinit var profileEditActivityPresenter : ProfileEditActivityPresenter
+    @Inject lateinit var profileEditActivityPresenter : ProfileEditPresenter
 
     private var profileImageUri : Uri? = null
 
-    override fun getPresenterImpl(): ProfileEditActivityContract.Presenter = profileEditActivityPresenter
+    override fun getPresenterImpl(): ProfileEditContract.Presenter = profileEditActivityPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

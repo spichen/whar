@@ -1,29 +1,39 @@
 package com.zigzag.whar.ui.dashboard
 
+import android.Manifest
 import android.os.Bundle
+import com.tbruyelle.rxpermissions2.RxPermissions
 import com.zigzag.whar.R
-import com.google.firebase.auth.FirebaseAuth
-import com.jakewharton.rxbinding2.view.clicks
-import com.zigzag.whar.arch.BaseActivity
-import kotlinx.android.synthetic.main.activity_dashboard.*
+import com.zigzag.whar.common.ActivityUtils
+import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
-class DashboardActivity : BaseActivity<DashboardActivityContract.View, DashboardActivityContract.Presenter>(), DashboardActivityContract.View{
+class DashboardActivity : DaggerAppCompatActivity(){
 
-    @Inject lateinit var dashboardActivityPresenter : DashboardActivityPresenter
+    @Inject
+    lateinit var dashboardFragmentProvider: DashboardFragment
 
-    override fun getPresenterImpl(): DashboardActivityContract.Presenter = dashboardActivityPresenter
+    @Inject
+    lateinit var dashboardPresenter: DashboardPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
-        btn_test.clicks()
-                .subscribe {
-                    FirebaseAuth.getInstance().signOut()
-                }
-    }
 
-    override fun gotoDashboard() {
-        //NO-OP
+        dashboardPresenter.onPresenterCreated()
+
+        var fragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
+        if (fragment == null) {
+            RxPermissions(this)
+                    .request(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)
+                    .subscribe({ granted ->
+                        if (granted) {
+                            fragment = dashboardFragmentProvider
+                            ActivityUtils.addFragmentToActivity(supportFragmentManager, fragment, R.id.main_fragment_container)
+                        } else {
+
+                        }
+                    })
+        }
     }
 }

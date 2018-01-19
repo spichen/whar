@@ -9,10 +9,10 @@ import dagger.Module
  */
 
 @Module
-abstract class ProfileEditActivityModule {
+abstract class ProfileEditModule {
 
     @ActivityScoped
     @Binds
-    internal abstract fun profileEditActivityPresenter(presenter: ProfileEditActivityPresenter): ProfileEditActivityContract.Presenter
+    internal abstract fun profileEditActivityPresenter(presenter: ProfileEditPresenter): ProfileEditContract.Presenter
 
 }
