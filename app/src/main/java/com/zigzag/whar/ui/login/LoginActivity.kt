@@ -330,8 +330,4 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
         btn_submit.dispose()
     }
 
-    override fun logout() {
-        //NO-OP
-    }
-
 }

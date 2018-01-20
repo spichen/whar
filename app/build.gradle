@@ -13,6 +13,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "com.zigzag.whar.MockJUnitRunner"
         multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {

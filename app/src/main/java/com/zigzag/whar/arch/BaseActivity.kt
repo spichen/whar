@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.CallSuper
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 
 import dagger.android.support.DaggerAppCompatActivity
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.auth.FirebaseUser
 import com.zigzag.whar.ui.dashboard.DashboardActivity
 import com.zigzag.whar.ui.login.LoginActivity
 import com.zigzag.whar.ui.profileEdit.ProfileEditActivity
@@ -61,7 +63,6 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
 
     protected abstract fun getPresenterImpl(): P
 
-
     fun hideKeyboard(){
         val view = this.currentFocus
         if (view != null) {
@@ -70,19 +71,25 @@ abstract class BaseActivity<V : BaseContract.View, P : BaseContract.Presenter<V>
         }
     }
 
-    override fun logout() {
-        startActivity(Intent(this@BaseActivity,LoginActivity::class.java))
-        finish()
-    }
+    override fun authRedirect(user : FirebaseUser?){
+        val localClassNameArray = this.localClassName.split(".")
+        val localClassName = localClassNameArray[localClassNameArray.size - 1]
 
-    override fun gotoDashboard() {
-        startActivity(Intent(this@BaseActivity,DashboardActivity::class.java))
-        finish()
+        if(user == null){
+            if(localClassName!=LoginActivity::class.java.simpleName) {
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
+        } else if(user.displayName.isNullOrEmpty()) {
+            if(localClassName!=ProfileEditActivity::class.java.simpleName) {
+                startActivity(Intent(this, ProfileEditActivity::class.java))
+                finish()
+            }
+        } else {
+            if(localClassName!=DashboardActivity::class.java.simpleName) {
+                startActivity(Intent(this, DashboardActivity::class.java))
+                finish()
+            }
+        }
     }
-
-    override fun gotoEditProfile() {
-        startActivity(Intent(this@BaseActivity,ProfileEditActivity::class.java))
-        finish()
-    }
-
 }

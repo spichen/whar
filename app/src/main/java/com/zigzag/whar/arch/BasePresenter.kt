@@ -67,15 +67,14 @@ abstract class BasePresenter<V : BaseContract.View> : LifecycleObserver, BaseCon
     override fun onPresenterCreated() {
         rxFirebaseAuth.observeAuthState()
                 .subscribe { firebaseAuth ->
-                    val user = firebaseAuth.currentUser
+                    view?.authRedirect(firebaseAuth.currentUser)
+                    /*val user = firebaseAuth.currentUser
                     if(user==null){
                         view?.logout()
                     }else{
                         if(user.displayName.isNullOrEmpty())
                             view?.gotoEditProfile()
-                        else
-                            view?.gotoDashboard()
-                    }
-                }.track()
+                    }*/
+                }
     }
 }

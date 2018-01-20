@@ -1,4 +1,4 @@
-package com.zigzag.whar.ui.dashboard
+package com.zigzag.whar.ui.dashboard.feeds
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,11 +12,11 @@ import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 import javax.inject.Inject
 
 @ActivityScoped
-class DashboardFragment @Inject constructor(): BaseFragment<DashboardContract.View, DashboardContract.Presenter>(), DashboardContract.View {
+class FeedsFragment @Inject constructor(): BaseFragment<FeedsContract.View, FeedsContract.Presenter>(), FeedsContract.View {
 
-    @Inject lateinit var dashboardPresenter : DashboardPresenter
+    @Inject lateinit var feedsPresenter : FeedsPresenter
 
-    override fun getPresenterImpl(): DashboardContract.Presenter = dashboardPresenter
+    override fun getPresenterImpl(): FeedsContract.Presenter = feedsPresenter
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -25,7 +25,6 @@ class DashboardFragment @Inject constructor(): BaseFragment<DashboardContract.Vi
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         presenter.initiate(ReactiveLocationProvider(activity))
     }
 
@@ -37,8 +36,5 @@ class DashboardFragment @Inject constructor(): BaseFragment<DashboardContract.Vi
         tv_temp.text = location
     }
 
-    override fun gotoDashboard() {
-        // NO-OP
-    }
 
 }

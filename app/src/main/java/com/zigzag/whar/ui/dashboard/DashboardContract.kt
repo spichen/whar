@@ -1,7 +1,6 @@
 package com.zigzag.whar.ui.dashboard
 
 import com.zigzag.whar.arch.BaseContract
-import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 
 /**
  * Created by salah on 30/12/17.
@@ -9,12 +8,10 @@ import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 
 class DashboardContract {
     interface View : BaseContract.View {
-        fun tempShowLocation(location : String)
-        fun displayFeeds()
+        fun logout()
+        fun gotoEditProfile()
     }
 
-    interface Presenter : BaseContract.Presenter<View> {
-        fun initiate(locationProvider : ReactiveLocationProvider)
-    }
+    interface Presenter : BaseContract.Presenter<View>
 
 }

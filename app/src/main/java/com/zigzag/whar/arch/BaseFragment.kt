@@ -5,7 +5,9 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.CallSuper
+import android.util.Log
 import android.view.View
+import com.google.firebase.auth.FirebaseUser
 import com.zigzag.whar.ui.dashboard.DashboardActivity
 import com.zigzag.whar.ui.login.LoginActivity
 import com.zigzag.whar.ui.profileEdit.ProfileEditActivity
@@ -52,18 +54,7 @@ abstract class BaseFragment<V : BaseContract.View, P : BaseContract.Presenter<V>
     protected abstract fun getPresenterImpl(): P
 
 
-    override fun logout() {
-        startActivity(Intent(activity, LoginActivity::class.java))
-        activity.finish()
-    }
-
-    override fun gotoDashboard() {
-        startActivity(Intent(activity, DashboardActivity::class.java))
-        activity.finish()
-    }
-
-    override fun gotoEditProfile() {
-        startActivity(Intent(activity, ProfileEditActivity::class.java))
-        activity.finish()
+    override fun authRedirect(user : FirebaseUser?){
+        // Operation managed in activity
     }
 }

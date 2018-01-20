@@ -1,4 +1,4 @@
-package com.zigzag.whar.ui.dashboard
+package com.zigzag.whar.ui.dashboard.feeds
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -11,12 +11,12 @@ import javax.inject.Inject
  * Created by salah on 30/12/17.
  */
 
-class DashboardPresenter @Inject constructor() : BasePresenter<DashboardContract.View>(), DashboardContract.Presenter  {
+class FeedsPresenter @Inject constructor() : BasePresenter<FeedsContract.View>(), FeedsContract.Presenter  {
 
     companion object {
         val TAG = "DashboardPresenter"
     }
-/*
+
     @SuppressLint("MissingPermission")
     override fun initiate(locationProvider: ReactiveLocationProvider) {
         val request = LocationRequest.create()
@@ -30,6 +30,5 @@ class DashboardPresenter @Inject constructor() : BasePresenter<DashboardContract
                     Log.d(TAG,location.latitude.toString() + "," + location.longitude.toString())
                     view?.tempShowLocation(location.latitude.toString() + "," + location.longitude.toString())
                 }
-    }*/
-
+    }
 }

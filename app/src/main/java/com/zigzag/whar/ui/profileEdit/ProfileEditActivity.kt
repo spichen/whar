@@ -125,10 +125,6 @@ class ProfileEditActivity : BaseActivity<ProfileEditContract.View, ProfileEditCo
         btn_submit.revertAnimation()
     }
 
-    override fun gotoEditProfile() {
-        //NO-OP
-    }
-
     override fun onComplete() {
         startActivity(Intent(this@ProfileEditActivity,DashboardActivity::class.java))
         finish()

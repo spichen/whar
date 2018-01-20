@@ -2,6 +2,7 @@ package com.zigzag.whar.arch
 
 import android.arch.lifecycle.Lifecycle
 import android.os.Bundle
+import com.google.firebase.auth.FirebaseUser
 
 /**
  * Created by salah on 27/12/17.
@@ -10,9 +11,7 @@ import android.os.Bundle
 interface BaseContract {
 
     interface View{
-        fun logout()
-        fun gotoDashboard()
-        fun gotoEditProfile()
+        fun authRedirect(user : FirebaseUser?)
     }
 
     interface Presenter<V : BaseContract.View> {
