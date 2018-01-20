@@ -1,10 +1,6 @@
 package com.zigzag.whar.ui.dashboard
 
-import android.annotation.SuppressLint
-import android.util.Log
-import com.google.android.gms.location.LocationRequest
 import com.zigzag.whar.arch.BasePresenter
-import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 import javax.inject.Inject
 
 /**
@@ -16,20 +12,5 @@ class DashboardPresenter @Inject constructor() : BasePresenter<DashboardContract
     companion object {
         val TAG = "DashboardPresenter"
     }
-/*
-    @SuppressLint("MissingPermission")
-    override fun initiate(locationProvider: ReactiveLocationProvider) {
-        val request = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setNumUpdates(5)
-                .setInterval(100)
-
-        locationProvider.getUpdatedLocation(request)
-                .distinctUntilChanged()
-                .subscribe { location ->
-                    Log.d(TAG,location.latitude.toString() + "," + location.longitude.toString())
-                    view?.tempShowLocation(location.latitude.toString() + "," + location.longitude.toString())
-                }
-    }*/
 
 }

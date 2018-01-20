@@ -2,15 +2,10 @@ package com.zigzag.whar.arch
 
 import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.CallSuper
-import android.util.Log
 import android.view.View
 import com.google.firebase.auth.FirebaseUser
-import com.zigzag.whar.ui.dashboard.DashboardActivity
-import com.zigzag.whar.ui.login.LoginActivity
-import com.zigzag.whar.ui.profileEdit.ProfileEditActivity
 
 import dagger.android.support.DaggerFragment
 
@@ -52,7 +47,6 @@ abstract class BaseFragment<V : BaseContract.View, P : BaseContract.Presenter<V>
     }
 
     protected abstract fun getPresenterImpl(): P
-
 
     override fun authRedirect(user : FirebaseUser?){
         // Operation managed in activity

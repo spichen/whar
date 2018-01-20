@@ -5,7 +5,7 @@
             <corners android:radius="5dp" />
             <padding android:left="0dp" />
             <padding android:right="0dp" />
-            <solid android:color="@android:color/white" />
+            <solid android:color="@color/colorPrimaryButton" />
         </shape>
     </item>
 </selector>

@@ -3,6 +3,8 @@ package com.zigzag.whar.ui.dashboard.feeds
 import android.annotation.SuppressLint
 import android.util.Log
 import com.google.android.gms.location.LocationRequest
+import com.google.firebase.firestore.GeoPoint
+import com.salah.geohash.GeoHash
 import com.zigzag.whar.arch.BasePresenter
 import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 import javax.inject.Inject
@@ -28,7 +30,8 @@ class FeedsPresenter @Inject constructor() : BasePresenter<FeedsContract.View>()
                 .distinctUntilChanged()
                 .subscribe { location ->
                     Log.d(TAG,location.latitude.toString() + "," + location.longitude.toString())
-                    view?.tempShowLocation(location.latitude.toString() + "," + location.longitude.toString())
+                    val p = GeoPoint(location.latitude,location.longitude)
+                    view?.tempShowLocation(GeoHash(p).geoHashString)
                 }
     }
 }

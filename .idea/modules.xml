@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/Whar.iml" filepath="$PROJECT_DIR$/Whar.iml" />
       <module fileurl="file://D:\whar\whar-android\Whar.iml" filepath="D:\whar\whar-android\Whar.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/geohash/geohash.iml" filepath="$PROJECT_DIR$/geohash/geohash.iml" />
       <module fileurl="file://$PROJECT_DIR$/whar-android.iml" filepath="$PROJECT_DIR$/whar-android.iml" />
     </modules>
   </component>

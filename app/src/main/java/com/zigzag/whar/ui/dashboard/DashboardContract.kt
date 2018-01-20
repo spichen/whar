@@ -7,10 +7,7 @@ import com.zigzag.whar.arch.BaseContract
  */
 
 class DashboardContract {
-    interface View : BaseContract.View {
-        fun logout()
-        fun gotoEditProfile()
-    }
+    interface View : BaseContract.View
 
     interface Presenter : BaseContract.Presenter<View>
 

@@ -1,15 +1,12 @@
 package com.zigzag.whar.ui.dashboard
 
 import android.Manifest
-import android.content.Intent
 import android.os.Bundle
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.zigzag.whar.R
 import com.zigzag.whar.arch.BaseActivity
 import com.zigzag.whar.common.ActivityUtils
 import com.zigzag.whar.ui.dashboard.feeds.FeedsFragment
-import com.zigzag.whar.ui.login.LoginActivity
-import com.zigzag.whar.ui.profileEdit.ProfileEditActivity
 import javax.inject.Inject
 
 class DashboardActivity :  BaseActivity<DashboardContract.View, DashboardContract.Presenter>(), DashboardContract.View {
@@ -40,13 +37,4 @@ class DashboardActivity :  BaseActivity<DashboardContract.View, DashboardContrac
         }
     }
 
-    override fun logout() {
-        startActivity(Intent(this, LoginActivity::class.java))
-        finish()
-    }
-
-    override fun gotoEditProfile() {
-        startActivity(Intent(this, ProfileEditActivity::class.java))
-        finish()
-    }
 }

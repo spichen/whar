@@ -19,7 +19,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/enter_code"
-        android:textColor="@android:color/white"
         android:textSize="20sp"
         android:textStyle="bold"
         app:fontFamily="sans-serif-bold"
@@ -51,7 +50,6 @@
             android:maxLength="1"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:backgroundTint="@android:color/white"
             app:fontFamily="sans-serif-bold" />
 
         <android.support.v7.widget.AppCompatEditText
@@ -64,8 +62,7 @@
             android:textStyle="bold"
             app:fontFamily="sans-serif-bold"
             android:maxLength="1"
-            android:textSize="20sp"
-            app:backgroundTint="@android:color/white" />
+            android:textSize="20sp"/>
 
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/et_code_3"
@@ -77,8 +74,7 @@
             app:fontFamily="sans-serif-bold"
             android:maxLength="1"
             android:inputType="number"
-            android:textSize="20sp"
-            app:backgroundTint="@android:color/white" />
+            android:textSize="20sp" />
 
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/et_code_4"
@@ -90,8 +86,7 @@
             app:fontFamily="sans-serif-bold"
             android:maxLength="1"
             android:inputType="number"
-            android:textSize="20sp"
-            app:backgroundTint="@android:color/white" />
+            android:textSize="20sp" />
 
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/et_code_5"
@@ -103,8 +98,7 @@
             app:fontFamily="sans-serif-bold"
             android:maxLength="1"
             android:inputType="number"
-            android:textSize="20sp"
-            app:backgroundTint="@android:color/white" />
+            android:textSize="20sp" />
 
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/et_code_6"
@@ -116,8 +110,7 @@
             app:fontFamily="sans-serif-bold"
             android:maxLength="1"
             android:inputType="number"
-            android:textSize="20sp"
-            app:backgroundTint="@android:color/white" />
+            android:textSize="20sp" />
     </android.support.v7.widget.LinearLayoutCompat>
 
     <TextView
@@ -127,7 +120,6 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:textColor="@android:color/white"
         android:fontFamily="sans-serif-light"
         android:gravity="center_horizontal"
         android:text="@string/code_message"
@@ -146,7 +138,6 @@
         android:fontFamily="sans-serif"
         android:gravity="center_horizontal"
         android:text="@string/tap_to_edit"
-        android:textColor="@android:color/white"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
