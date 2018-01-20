@@ -23,5 +23,6 @@
     <string name="no_permission">No Permission</string>
     <string name="request_location_permission">We require your device location permission to display your nearby feeds.</string>
     <string name="grant_permission">Grant Permission</string>
+    <string name="logout">Logout</string>
 
 </resources>
