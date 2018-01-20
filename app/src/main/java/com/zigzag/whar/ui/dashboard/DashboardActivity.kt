@@ -2,11 +2,13 @@ package com.zigzag.whar.ui.dashboard
 
 import android.Manifest
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.zigzag.whar.R
 import com.zigzag.whar.arch.BaseActivity
 import com.zigzag.whar.common.ActivityUtils
 import com.zigzag.whar.ui.dashboard.feeds.FeedsFragment
+import com.zigzag.whar.ui.dashboard.fragments.PermissionFragment
 import javax.inject.Inject
 
 class DashboardActivity :  BaseActivity<DashboardContract.View, DashboardContract.Presenter>(), DashboardContract.View {
@@ -14,27 +16,42 @@ class DashboardActivity :  BaseActivity<DashboardContract.View, DashboardContrac
     lateinit var feedsFragment : FeedsFragment
 
     @Inject
+    lateinit var permissionFragment : PermissionFragment
+
+    @Inject
     lateinit var dashboardPresenter: DashboardPresenter
 
     override fun getPresenterImpl(): DashboardContract.Presenter = dashboardPresenter
+
+    var fragment : Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
-        var fragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
+        fragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
+
         if (fragment == null) {
             RxPermissions(this)
                     .request(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)
                     .subscribe({ granted ->
                         if (granted) {
-                            fragment = feedsFragment
-                            ActivityUtils.addFragmentToActivity(supportFragmentManager, fragment, R.id.main_fragment_container)
+                            presenter.displayFeedsFragment()
                         } else {
-
+                            presenter.displayPermissionFragment()
                         }
                     })
         }
+    }
+
+    override fun displayFeedsFragment() {
+        fragment = feedsFragment
+        ActivityUtils.addFragmentToActivity(supportFragmentManager, fragment as FeedsFragment, R.id.main_fragment_container)
+    }
+
+    override fun displayPermissionFragment() {
+        fragment = permissionFragment
+        ActivityUtils.addFragmentToActivity(supportFragmentManager, fragment as PermissionFragment, R.id.main_fragment_container)
     }
 
 }

@@ -1,6 +1,5 @@
 package com.zigzag.whar.ui.profileEdit
 
-import android.support.test.espresso.Espresso.onData
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.action.ViewActions.*
@@ -12,19 +11,15 @@ import android.support.test.espresso.intent.rule.IntentsTestRule
 import android.support.test.espresso.matcher.ViewMatchers
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
-import android.view.View
 import com.zigzag.whar.R
 import com.zigzag.whar.ui.dashboard.DashboardActivity
 import org.hamcrest.CoreMatchers
-import org.hamcrest.CoreMatchers.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import android.widget.DatePicker
 import android.support.test.espresso.matcher.ViewMatchers.withClassName
-import android.support.test.espresso.Espresso.onView
 import org.hamcrest.Matchers
-
 
 /**
  * Created by salah on 19/1/18.

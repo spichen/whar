@@ -7,8 +7,14 @@ import com.zigzag.whar.arch.BaseContract
  */
 
 class DashboardContract {
-    interface View : BaseContract.View
+    interface View : BaseContract.View {
+        fun displayPermissionFragment()
+        fun displayFeedsFragment()
+    }
 
-    interface Presenter : BaseContract.Presenter<View>
+    interface Presenter : BaseContract.Presenter<View> {
+        fun displayPermissionFragment()
+        fun displayFeedsFragment()
+    }
 
 }

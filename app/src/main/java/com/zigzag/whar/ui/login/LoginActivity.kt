@@ -2,7 +2,6 @@ package com.zigzag.whar.ui.login
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import com.jakewharton.rxbinding2.widget.textChanges
 import com.zigzag.whar.R
 import com.zigzag.whar.arch.BaseActivity
@@ -162,10 +161,8 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
 
     private fun updateSubmitButton(){
         if(vp_container.currentItem == PAGE_PHONE_NUMBER){
-            btn_submit.background = ContextCompat.getDrawable(this,R.drawable.login_button_shape)
             btn_submit.setText(R.string.get_code)
         }else{
-            btn_submit.background = ContextCompat.getDrawable(this,R.drawable.login_button_shape)
             btn_submit.setText(R.string.verify)
         }
     }
