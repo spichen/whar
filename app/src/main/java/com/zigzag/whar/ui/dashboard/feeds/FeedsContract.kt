@@ -15,6 +15,7 @@ class FeedsContract {
 
     interface Presenter : BaseContract.Presenter<View> {
         fun initiate(locationProvider : ReactiveLocationProvider)
+        fun sendMessage(text : String)
     }
 
 }

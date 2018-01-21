@@ -43,17 +43,19 @@ class TestFirebaseModule {
         }
         val loggedOutFirebaseAuth = Mockito.mock(FirebaseAuth::class.java)
 
-        return mock<RxFirebaseAuth> {
+        return mock {
             on { phoneAuthProvider(919895940989) } doAnswer {
                 authStateMockInterface.login()
                 Observable.just(credential as Any)
             }
             on { phoneAuthProvider(919747797987) } doReturn Observable.just(VerificationData("himalaya",forceResendToken) as Any)
-            on { signInWithCode("himalaya","123456")  } doAnswer {
+
+            on { signInWithCode("himalaya",123456)  } doAnswer {
                 authStateMockInterface.login()
-                return@doAnswer Completable.complete()
+                return@doAnswer Observable.just(true)
             }
-            on { signInWithCode("himalaya","123451") } doReturn Completable.error(RxFirebaseAuthError())
+
+            on { signInWithCode("himalaya",123451) } doReturn Observable.error(RxFirebaseAuthError("Invalid Code"))
             on { phoneAuthProvider(910000000000) } doReturn Observable.error(RxFirebaseAuthError("The format of the phone number provided is incorrect"))
             on { observeAuthState() } doReturn Observable.create<FirebaseAuth> { emitter ->
                 authStateMockInterface = object : AuthStateMockInterface {

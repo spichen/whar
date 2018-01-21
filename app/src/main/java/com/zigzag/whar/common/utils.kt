@@ -10,7 +10,7 @@ import android.util.DisplayMetrics
 
 object Utils {
     fun isValidMobile(phone: CharSequence): Boolean {
-        return if (!Pattern.matches("[a-zA-Z]+", phone)) {
+        return if (Pattern.matches("[0-9]+", phone)) {
             !(phone.length < 6 || phone.length > 13)
         } else {
             false

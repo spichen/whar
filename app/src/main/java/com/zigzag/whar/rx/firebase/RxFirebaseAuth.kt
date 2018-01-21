@@ -72,24 +72,24 @@ open class RxFirebaseAuth {
             token)
     }
 
-    open fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential): Completable {
-        return Completable.create { emitter ->
+    open fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) : Observable<Boolean> {
+        return Observable.create { emitter ->
             FirebaseAuth.getInstance().signInWithCredential(credential)
                 .addOnCompleteListener(MAIN_THREAD, OnCompleteListener<AuthResult> { task ->
                     if (task.isSuccessful) {
-                        emitter.onComplete()
+                        emitter.onNext(true)
                     } else {
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
                         if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                            emitter.onError(RxFirebaseAuthError())
+                            emitter.onError(RxFirebaseAuthError("Invalid Code"))
                         }
                     }
                 })
         }
     }
 
-    open fun signInWithCode(verificationId: String, code : String): Completable {
-        return signInWithPhoneAuthCredential(PhoneAuthProvider.getCredential(verificationId, code))
+    open fun signInWithCode(verificationId: String, code : Number): Observable<Boolean> {
+        return signInWithPhoneAuthCredential(PhoneAuthProvider.getCredential(verificationId, code.toString()))
     }
 
     open fun updateUserDetails(name : String, image : Uri? = null): Maybe<String> {

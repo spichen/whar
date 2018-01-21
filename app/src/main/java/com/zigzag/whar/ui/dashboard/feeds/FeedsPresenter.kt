@@ -6,6 +6,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.firebase.firestore.GeoPoint
 import com.salah.geohash.GeoHash
 import com.zigzag.whar.arch.BasePresenter
+import com.zigzag.whar.common.Constants
 import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 import javax.inject.Inject
 
@@ -19,6 +20,8 @@ class FeedsPresenter @Inject constructor() : BasePresenter<FeedsContract.View>()
         val TAG = "DashboardPresenter"
     }
 
+    var currentGeoHash : String = ""
+
     @SuppressLint("MissingPermission")
     override fun initiate(locationProvider: ReactiveLocationProvider) {
         val request = LocationRequest.create()
@@ -31,7 +34,21 @@ class FeedsPresenter @Inject constructor() : BasePresenter<FeedsContract.View>()
                 .subscribe { location ->
                     Log.d(TAG,location.latitude.toString() + "," + location.longitude.toString())
                     val p = GeoPoint(location.latitude,location.longitude)
-                    view?.tempShowLocation(GeoHash(p).geoHashString)
+                    currentGeoHash = GeoHash(p).geoHashString
+                    view?.tempShowLocation(currentGeoHash)
+                }
+    }
+
+    override fun sendMessage(text: String) {
+
+        val messageData = HashMap<String,Any>()
+        messageData["g"] = currentGeoHash
+        messageData["message"] = text
+
+        rxFirebaseFirestore
+                .add("messages",messageData)
+                .subscribe { documentReference ->
+                    Log.d(TAG,documentReference.id)
                 }
     }
 }

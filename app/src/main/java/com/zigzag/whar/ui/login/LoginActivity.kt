@@ -19,7 +19,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.zigzag.whar.common.helpers.ViewHelpers.whiteLongSnackBar
-import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.page_phone_number.view.*
 import kotlinx.android.synthetic.main.page_code.view.*
 import android.view.inputmethod.InputMethodManager
@@ -31,8 +30,8 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
     @Inject lateinit var loginActivityPresenter : LoginPresenter
 
     companion object {
-        val PAGE_PHONE_NUMBER = 0
-        val PAGE_CODE = 1
+        const val PAGE_PHONE_NUMBER = 0
+        const val PAGE_CODE = 1
     }
 
     var phoneNumberPage : View? = null
@@ -59,97 +58,130 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
     }
 
     private fun initObservation() {
-        phoneNumberPage?.et_number?.textChanges()
-            ?.subscribe { query ->
-                phoneNumber = query
-                validateSubmitButton()
-            }?.track()
-        Observable.merge(phoneNumberPage?.et_number?.editorActions(),codePage?.et_code_6?.editorActions(), btn_submit.clicks())
-            .observeOn(AndroidSchedulers.mainThread())
-            .map{
-                if(vp_container.currentItem == PAGE_PHONE_NUMBER) {
-                    phoneNumberPage?.s_country_code?.selectedItem.toString().split("+")[1] + phoneNumberPage?.et_number?.text.toString()
-                }else{
-                    getUserInputtedCode().toString()
-                }
-            }
-            .subscribe { query ->
-                hideKeyboard()
-                if(vp_container.currentItem == PAGE_PHONE_NUMBER){
-                    try {
-                        startSubmitButtonAnimation()
-                        presenter.requestCode(query.toLong())
-                    } catch (e : Exception){
-                        phoneNumberPage?.et_number?.error = getString(R.string.invalid_phone_number)
-                        revertSubmitButton()
-                    }
-                }else{
-                    if(validateCode()){
-                        startSubmitButtonAnimation()
-                        presenter.verifyCode(query.toLong())
-                    }else{
-                        showError(R.id.incomplete_code)
-                        revertSubmitButton()
-                    }
-                }
-            }.track()
-        codePage?.tv_phone_number?.clicks()
-            ?.subscribe{
-                displayPhoneNumberInputPage()
-            }?.track()
-        codePage?.et_code_1?.textChanges()
-            ?.subscribe{ query ->
-                validateSubmitButton()
-                if(query.length == 1){
-                    codePage?.et_code_2?.requestFocus()
-                }
-            }?.track()
-        codePage?.et_code_2?.textChanges()
-            ?.subscribe{ query ->
-                validateSubmitButton()
-                if(query.length == 1){
-                    codePage?.et_code_3?.requestFocus()
-                }
-            }?.track()
-        codePage?.et_code_3?.textChanges()
-            ?.subscribe{ query ->
-                validateSubmitButton()
-                if(query.length == 1){
-                    codePage?.et_code_4?.requestFocus()
-                }
-            }?.track()
-        codePage?.et_code_4?.textChanges()
-            ?.subscribe{ query ->
-                validateSubmitButton()
-                if(query.length == 1){
-                    codePage?.et_code_5?.requestFocus()
-                }
-            }?.track()
-        codePage?.et_code_5?.textChanges()
-            ?.subscribe{ query ->
-                validateSubmitButton()
-                if(query.length == 1){
-                    codePage?.et_code_6?.requestFocus()
-                }
-            }?.track()
-        codePage?.et_code_6?.textChanges()
-            ?.subscribe {
-                validateSubmitButton()
-            }?.track()
-        tv_resend?.clicks()
-            ?.subscribe{
-                presenter.resendCode()
-                hideKeyboard()
-            }?.track()
+
         vp_container.pageSelections()
-            .subscribe{ page ->
-                revertSubmitButton()
-                validateSubmitButton()
-                updateUI(page)
-            }?.track()
+                .subscribe{ page ->
+                    revertSubmitButton()
+                    validateSubmitButton()
+                    updateUI(page)
+                }?.track()
+
+        val codeRequestEvent : Observable<LoginPresenter.RequestCodeEvent> =
+                Observable.merge(
+                        phoneNumberPage?.et_number?.editorActions()?.filter { validateNumber() },
+                        btn_submit.clicks().filter { vp_container.currentItem == PAGE_PHONE_NUMBER }
+                )
+                .map { LoginPresenter.RequestCodeEvent(getUserInputtedNumber()) }
+
+        val verifyCodeEvent : Observable<LoginPresenter.VerifyCodeEvent> =
+                Observable.merge(
+                        codePage?.et_code_6?.editorActions()?.filter { validateCode() },
+                        btn_submit.clicks().filter { vp_container.currentItem == PAGE_CODE }
+                )
+                .map { LoginPresenter.VerifyCodeEvent(getUserInputtedCode()) }
+
+        Observable.merge(codeRequestEvent,verifyCodeEvent)
+                .compose(presenter.submitTransformer())
+                .subscribe ({ model ->
+                    animateSubmitButton(model.inProgress)
+                    enableInputFields(!model.inProgress)
+                    if(!model.inProgress){
+                        when {
+                            model.codeSent -> displayCodeInputPage()
+                            model.success -> completeSubmitButtonAnimation()
+                            else -> {
+                                showError(model.errorMessage)
+                            }
+                        }
+                    }
+                })
+                { t -> showError(t.localizedMessage) }
+                .track()
+
+        phoneNumberPage?.et_number?.textChanges()
+                ?.subscribe { query ->
+                    phoneNumber = query
+                    validateSubmitButton()
+                }?.track()
+
+        codePage?.tv_phone_number?.clicks()
+                ?.subscribe{
+                    displayPhoneNumberInputPage()
+                }?.track()
+
+        codePage?.et_code_1?.textChanges()
+                ?.subscribe{ query ->
+                    validateSubmitButton()
+                    if(query.length == 1){
+                        codePage?.et_code_2?.requestFocus()
+                    }
+                }?.track()
+
+        codePage?.et_code_2?.textChanges()
+                ?.subscribe{ query ->
+                    validateSubmitButton()
+                    if(query.length == 1){
+                        codePage?.et_code_3?.requestFocus()
+                    }
+                }?.track()
+
+        codePage?.et_code_3?.textChanges()
+                ?.subscribe{ query ->
+                    validateSubmitButton()
+                    if(query.length == 1){
+                        codePage?.et_code_4?.requestFocus()
+                    }
+                }?.track()
+
+        codePage?.et_code_4?.textChanges()
+                ?.subscribe{ query ->
+                    validateSubmitButton()
+                    if(query.length == 1){
+                        codePage?.et_code_5?.requestFocus()
+                    }
+                }?.track()
+
+        codePage?.et_code_5?.textChanges()
+                ?.subscribe{ query ->
+                    validateSubmitButton()
+                    if(query.length == 1){
+                        codePage?.et_code_6?.requestFocus()
+                    }
+                }?.track()
+
+        codePage?.et_code_6?.textChanges()
+                ?.subscribe {
+                    validateSubmitButton()
+                }?.track()
+
+        tv_resend?.clicks()
+                ?.doOnNext { hideKeyboard() }
+                ?.map { presenter.resendCode(phoneNumber.toString().toLong()) }
+                ?.subscribe{
+                    showSuccess(R.string.code_resent)
+                }?.track()
     }
 
-    override fun revertSubmitButton() {
+    private fun animateSubmitButton(animate : Boolean){
+        if(animate){
+            btn_submit.startAnimation()
+        }else{
+            revertSubmitButton()
+        }
+    }
+
+    private fun enableInputFields(enable : Boolean) {
+        phoneNumberPage?.et_number?.isEnabled = enable
+        phoneNumberPage?.s_country_code?.isEnabled = enable
+        codePage?.et_code_1?.isEnabled = enable
+        codePage?.et_code_2?.isEnabled = enable
+        codePage?.et_code_3?.isEnabled = enable
+        codePage?.et_code_4?.isEnabled = enable
+        codePage?.et_code_5?.isEnabled = enable
+        codePage?.et_code_6?.isEnabled = enable
+    }
+
+    private fun revertSubmitButton() {
         if(btn_submit.isAnimating){
             btn_submit.revertAnimation {
                 updateSubmitButton()
@@ -160,35 +192,20 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
     }
 
     private fun updateSubmitButton(){
-        if(vp_container.currentItem == PAGE_PHONE_NUMBER){
-            btn_submit.setText(R.string.get_code)
-        }else{
-            btn_submit.setText(R.string.verify)
-        }
-    }
-
-    override fun startSubmitButtonAnimation() {
-        btn_submit.startAnimation()
-    }
-
-    override fun completeSubmitButtonAnimation() {
-        // @TODO add success animation
+        btn_submit.setText(if(vp_container.currentItem == PAGE_PHONE_NUMBER) R.string.get_code else R.string.verify )
     }
 
     private fun validateSubmitButton(){
-        if(vp_container.currentItem == PAGE_PHONE_NUMBER){
-            if(Utils.isValidMobile(phoneNumberPage?.et_number?.text.toString())){
-                enableSubmitButton()
-            }else {
-                disableSubmitButton()
-            }
-        }else{
-            if(validateCode()){
-                enableSubmitButton()
-            }else{
-                disableSubmitButton()
-            }
-        }
+        enableSubmitButton(if(vp_container.currentItem == PAGE_PHONE_NUMBER)  validateCode() else validateNumber())
+    }
+
+    private fun completeSubmitButtonAnimation() {
+        // @TODO add success animation
+    }
+
+
+    private fun validateNumber() : Boolean {
+        return Utils.isValidMobile(phoneNumberPage?.et_number?.text.toString())
     }
 
     private fun validateCode() : Boolean{
@@ -241,12 +258,18 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
         }
     }
 
-    override fun showError(error: String) {
-        whiteLongSnackBar(btn_submit,error,R.color.colorPrimaryDark)
-        revertSubmitButton()
+    private fun getUserInputtedNumber() : Number {
+        return (phoneNumberPage?.s_country_code?.selectedItem.toString().split("+")[1] + phoneNumberPage?.et_number?.text.toString().toLong()).toLong()
     }
 
-    override fun showError(error: Int) {
+    private fun showError(error: String?) {
+        if(error != null){
+            whiteLongSnackBar(btn_submit,error,R.color.colorPrimaryDark)
+            revertSubmitButton()
+        }
+    }
+
+    private fun showError(error: Int) {
         showError(getString(error))
     }
 
@@ -263,14 +286,9 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
         btn_submit.text = text
     }
 
-    override fun disableSubmitButton() {
-        btn_submit.isEnabled = false
-        btn_submit.alpha = 0.5f
-    }
-
-    override fun enableSubmitButton() {
-        btn_submit.isEnabled = true
-        btn_submit.alpha = 1f
+    private fun enableSubmitButton(enable: Boolean) {
+        btn_submit.isEnabled = enable
+        btn_submit.alpha = if(enable) 1f else 0.5f
     }
 
     private fun showKeyboard(view : View){

@@ -41,7 +41,6 @@ class LoginActivityTest {
     fun checkIfNumberEditTapIsRevertingToNumberField() {
         onView(withId(R.id.s_country_code)).perform(click())
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("IN +91"))).perform(click())
-
         onView(withId(R.id.et_number)).perform(typeText("9747797987"))
         onView(withId(R.id.btn_submit)).perform(click())
         onView(withId(R.id.tv_enter_code)).check(matches(isDisplayed()))
@@ -50,28 +49,30 @@ class LoginActivityTest {
     }
 
     @Test
-    fun checkVerifyButtonEnableFunctionality() {
+    fun checkIfDashboardActivityIsLaunchedOnManualVerification() {
         onView(withId(R.id.s_country_code)).perform(click())
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("IN +91"))).perform(click())
-
         onView(withId(R.id.et_number)).perform(typeText("9747797987"))
         onView(withId(R.id.btn_submit)).perform(click())
         onView(withId(R.id.tv_enter_code)).check(matches(isDisplayed()))
         onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
         onView(withId(R.id.et_code_1)).perform(typeText("1"))
         onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
-        onView(withId(R.id.et_code_2)).perform(typeText("1"))
+        onView(withId(R.id.et_code_2)).perform(typeText("2"))
         onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
-        onView(withId(R.id.et_code_3)).perform(typeText("1"))
+        onView(withId(R.id.et_code_3)).perform(typeText("3"))
         onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
-        onView(withId(R.id.et_code_4)).perform(typeText("1"))
+        onView(withId(R.id.et_code_4)).perform(typeText("4"))
         onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
-        onView(withId(R.id.et_code_5)).perform(typeText("1"))
+        onView(withId(R.id.et_code_5)).perform(typeText("5"))
         onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
         onView(withId(R.id.et_code_6)).perform(typeText("1"))
         onView(withId(R.id.btn_submit)).check(matches(isEnabled()))
-        onView(withId(R.id.et_code_5)).perform(replaceText(""))
-        onView(withId(R.id.btn_submit)).check(matches(not(isEnabled())))
+        onView(withId(R.id.btn_submit)).perform(click())
+        onView(withText("The verification code entered was invalid")).check(matches(isDisplayed()))
+        onView(withId(R.id.et_code_6)).perform(replaceText("6"))
+        onView(withId(R.id.btn_submit)).perform(click())
+        intended(hasComponent(ProfileEditActivity::class.java.name))
     }
 
     @Test
@@ -83,48 +84,6 @@ class LoginActivityTest {
         intended(hasComponent(ProfileEditActivity::class.java.name))
     }
 
-    @Test
-    fun checkIfDashboardActivityIsLaunchedOnManualVerification() {
-        onView(withId(R.id.s_country_code)).perform(click())
-        onData(allOf(`is`(instanceOf(String::class.java)), `is`("IN +91"))).perform(click())
-        onView(withId(R.id.et_number)).perform(typeText("9747797987"))
-        onView(withId(R.id.btn_submit)).perform(click())
-        onView(withId(R.id.et_code_1)).perform(typeText("1"))
-        onView(withId(R.id.et_code_2)).perform(typeText("2"))
-        onView(withId(R.id.et_code_3)).perform(typeText("3"))
-        onView(withId(R.id.et_code_4)).perform(typeText("4"))
-        onView(withId(R.id.et_code_5)).perform(typeText("5"))
-        onView(withId(R.id.et_code_6)).perform(typeText("6"))
-        onView(withId(R.id.btn_submit)).perform(click())
-        intended(hasComponent(ProfileEditActivity::class.java.name))
-    }
-
-    @Test
-    fun checkIfInvalidCodeErrorIsDisplayed() {
-        onView(withId(R.id.s_country_code)).perform(click())
-        onData(allOf(`is`(instanceOf(String::class.java)), `is`("IN +91"))).perform(click())
-        onView(withId(R.id.et_number)).perform(typeText("9747797987"))
-        onView(withId(R.id.btn_submit)).perform(click())
-        onView(withId(R.id.et_code_1)).perform(typeText("1"))
-        onView(withId(R.id.et_code_2)).perform(typeText("2"))
-        onView(withId(R.id.et_code_3)).perform(typeText("3"))
-        onView(withId(R.id.et_code_4)).perform(typeText("4"))
-        onView(withId(R.id.et_code_5)).perform(typeText("5"))
-        onView(withId(R.id.et_code_6)).perform(typeText("1"))
-        onView(withId(R.id.btn_submit)).check(matches(isEnabled()))
-        onView(withId(R.id.btn_submit)).perform(click())
-        onView(withText("The verification code entered was invalid")).check(matches(isDisplayed()))
-    }
-
-    @Test
-    fun checkIfInvalidNumberErrorMessageIsDisplayed() {
-        onView(withId(R.id.et_number)).perform(typeText("9*959*+5"))
-        onView(withId(R.id.btn_submit)).perform(click())
-        onView(withId(R.id.et_number)).check(matches(hasErrorText("Invalid Phone Number")))
-        onView(withId(R.id.et_number)).perform(typeText("++"))
-        onView(withId(R.id.btn_submit)).perform(click())
-        onView(withId(R.id.et_number)).check(matches(hasErrorText("Invalid Phone Number")))
-    }
 
     @Test
     fun checkIfFirebaseErrorMessageIsDisplayed() {

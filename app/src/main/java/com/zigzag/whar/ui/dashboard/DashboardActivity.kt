@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 
 class DashboardActivity :  BaseActivity<DashboardContract.View, DashboardContract.Presenter>(), DashboardContract.View {
+
     @Inject
     lateinit var feedsFragment : FeedsFragment
 
