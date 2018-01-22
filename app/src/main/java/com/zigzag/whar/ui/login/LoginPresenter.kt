@@ -3,6 +3,7 @@ package com.zigzag.whar.ui.login
 import android.util.Log
 import com.google.firebase.auth.PhoneAuthCredential
 import com.zigzag.whar.arch.BasePresenter
+import com.zigzag.whar.common.Utils
 import com.zigzag.whar.rx.firebase.VerificationData
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
@@ -20,27 +21,47 @@ class LoginPresenter @Inject constructor() : BasePresenter<LoginContract.View>()
     }
 
     private lateinit var verificationData : VerificationData
+    private lateinit var phoneNumber: Number
+
+    private val initialState = SubmitUiModel.idle()
+
+    override lateinit var uiObservable : Observable<SubmitUiModel>
 
     override fun resendCode(phoneNumber : Number) {
         return rxFirebaseAuth.resendCode(phoneNumber,verificationData.token)
     }
 
-    override fun signIn(phoneAuthCredential: PhoneAuthCredential) {
-        rxFirebaseAuth
-                .signInWithPhoneAuthCredential(phoneAuthCredential)
-                .subscribe({
-                    Log.d(TAG,"Signed In ")
-                }) {
-                    throwable: Throwable? ->
-                    Log.e(TAG,throwable?.localizedMessage)
-                    //view?.showError(R.string.invalid_code)
-                }.track()
+    override fun initUiObservable() {
+        uiObservable = Observable.merge(view?.getCodeRequestEvent(), view?.getVerifyCodeEvent(), view?.getValidateCodeEvent(), view?.getValidatePhoneNumberEvent())
+                .compose(submitTransformer())
+                .scan(initialState , { _, result ->
+                    if(result == ValidatePhoneNumberResult.INVALID || result == ValidateCodeResult.INVALID){
+                        return@scan SubmitUiModel.invalid()
+                    }
+                    if(result == ValidatePhoneNumberResult.VALID || result == ValidateCodeResult.VALID){
+                        return@scan SubmitUiModel.idle()
+                    }
+                    if(result == RequestCodeResult.IN_FLIGHT || result == VerifyCodeResult.IN_FLIGHT) {
+                        return@scan SubmitUiModel.inProgress()
+                    }
+                    if(result == RequestCodeResult.SUCCESS || result == VerifyCodeResult.SUCCESS) {
+                        return@scan SubmitUiModel.success()
+                    }
+                    if(result == RequestCodeResult.CODE_SENT) {
+                        return@scan SubmitUiModel.codeSent(this.phoneNumber)
+                    }
+                    if(result.failure){
+                        return@scan SubmitUiModel.failure(result.errorMessage)
+                    }
+                    throw IllegalArgumentException("Unknown Error "+result)
+                })
     }
 
-    private fun requestCode() : ObservableTransformer<RequestCodeEvent,SubmitUiModel> {
-        return ObservableTransformer { events ->
-            events.flatMap { event ->
-                rxFirebaseAuth.phoneAuthProvider(event.number)
+    private fun requestCode() : ObservableTransformer<RequestCodeEvent,RequestCodeResult> {
+        return ObservableTransformer { actions ->
+            actions.flatMap { action ->
+                this.phoneNumber = action.number
+                rxFirebaseAuth.phoneAuthProvider(action.number)
                         .compose {
                             it.flatMap {
                                 when (it) {
@@ -55,52 +76,64 @@ class LoginPresenter @Inject constructor() : BasePresenter<LoginContract.View>()
                         }
                         .map {
                             if(it)
-                                SubmitUiModel.success()
+                                RequestCodeResult.SUCCESS
                             else
-                                SubmitUiModel.codeSent()
+                                RequestCodeResult.CODE_SENT
                         }
-                        .onErrorReturn { t -> SubmitUiModel.failure(t) }
+                        .onErrorReturn { t -> RequestCodeResult.failure(t.localizedMessage) }
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(SubmitUiModel.inProgress())
+                        .startWith(RequestCodeResult.IN_FLIGHT)
             }
         }
     }
 
-
-    private fun verifyCode(): ObservableTransformer<VerifyCodeEvent, SubmitUiModel> {
+    private fun verifyCode(): ObservableTransformer<VerifyCodeEvent, VerifyCodeResult> {
         return ObservableTransformer { events ->
             events.flatMap { event ->
                 rxFirebaseAuth.signInWithCode(this.verificationData.verificationId, event.code)
-                        .map { SubmitUiModel.success() }
-                        .onErrorReturn { t -> SubmitUiModel.failure(t) }
+                        .map { VerifyCodeResult.SUCCESS }
+                        .onErrorReturn { t -> VerifyCodeResult.failure(t.localizedMessage) }
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(SubmitUiModel.inProgress())
+                        .startWith(VerifyCodeResult.IN_FLIGHT)
             }
         }
     }
 
-    override fun submitTransformer(): ObservableTransformer<SubmitEvent, SubmitUiModel> {
+    private fun validateCode(): ObservableTransformer<ValidateCodeEvent, ValidateCodeResult> {
+        return ObservableTransformer { events ->
+            events.flatMap { event ->
+                Observable.just(event.code.toString().length == 6)
+                        .map { if(it) ValidateCodeResult.VALID else ValidateCodeResult.INVALID}
+                        .observeOn(AndroidSchedulers.mainThread())
+            }
+        }
+    }
+
+    private fun validateNumber(): ObservableTransformer<ValidatePhoneNumberEvent, ValidatePhoneNumberResult> {
+        return ObservableTransformer { events ->
+            events.flatMap { event ->
+                Observable.just(Utils.isValidMobile(event.number))
+                        .map { if (it) ValidatePhoneNumberResult.VALID else ValidatePhoneNumberResult.INVALID }
+                        .observeOn(AndroidSchedulers.mainThread())
+            }
+        }
+    }
+
+    private fun submitTransformer(): ObservableTransformer<SubmitEvent, Results> {
         return ObservableTransformer { events ->
             events.publish { shared ->
                 Observable.merge(
                         shared.ofType(RequestCodeEvent::class.java).compose(requestCode()),
-                        shared.ofType(VerifyCodeEvent::class.java).compose(verifyCode())
+                        shared.ofType(VerifyCodeEvent::class.java).compose(verifyCode()),
+                        shared.ofType(ValidateCodeEvent::class.java).compose(validateCode()),
+                        shared.ofType(ValidatePhoneNumberEvent::class.java).compose(validateNumber())
                 )
             }
         }
     }
 
-    abstract class SubmitEvent
-
-    class RequestCodeEvent(var number: Number) : SubmitEvent()
-    class VerifyCodeEvent(var code: Number) : SubmitEvent()
-
-    class SubmitUiModel(var inProgress : Boolean,var success : Boolean,var codeSent :  Boolean = false ,var errorMessage : String? = null){
-        companion object {
-            fun inProgress() = SubmitUiModel(true,false)
-            fun codeSent() = SubmitUiModel(false,false,true)
-            fun success() = SubmitUiModel(false,true)
-            fun failure(t : Throwable) = SubmitUiModel(false,false,false, t.localizedMessage.split(".")[0])
-        }
+    override fun onPresenterCreated() {
+        super.onPresenterCreated()
+        Log.d(TAG,"preseneeter createdddd")
     }
 }
