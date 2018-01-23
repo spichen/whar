@@ -1,5 +1,6 @@
 package com.zigzag.whar.ui.login
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -26,10 +27,14 @@ import com.jakewharton.rxbinding2.support.v4.view.pageSelections
 import java.util.*
 import com.trello.lifecycle2.android.lifecycle.AndroidLifecycle
 import com.trello.rxlifecycle2.kotlin.bindToLifecycle
+import com.zigzag.whar.mviarch.BaseView
+import dagger.android.support.DaggerAppCompatActivity
+import android.arch.lifecycle.ViewModelProvider
 
+class LoginActivity : DaggerAppCompatActivity(), BaseView<LoginIntent,LoginViewState>{
 
-class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(), LoginContract.View{
-    @Inject lateinit var loginActivityPresenter : LoginPresenter
+    @Inject
+    lateinit var mViewModelFactory: ViewModelProvider.Factory
 
     companion object {
         const val PAGE_PHONE_NUMBER = 0
@@ -39,17 +44,47 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
     var phoneNumberPage : View? = null
     var codePage : View? = null
 
-    private var phoneNumber : CharSequence? = null
     private val provider = AndroidLifecycle.createLifecycleProvider(this)
 
-    override fun getPresenterImpl(): LoginContract.Presenter = loginActivityPresenter
+    private lateinit var loginViewModel: LoginViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        loginViewModel = ViewModelProviders.of(this, mViewModelFactory).get(LoginViewModel::class.java)
         initViews()
-        presenter.initUiObservable()
         initObservation()
+        bind()
+    }
+
+    override fun intents(): Observable<LoginIntent> {
+        return Observable.merge(
+                attemptLoginIntent(),
+                verifyCodeIntent(),
+                validateCodeIntent(),
+                validatePhoneNumberIntent()
+        )
+    }
+
+    override fun render(state: LoginViewState) {
+        animateSubmitButton(state.inProgress)
+        enableInputFields(!state.inProgress)
+        enableSubmitButton(!state.invalid)
+        if(!state.inProgress){
+            when {
+                state.codeSent -> {
+                    codePage?.tv_phone_number?.text = getString(R.string.tap_to_edit, state.lastPhoneNumber)
+                    codePage?.et_code_1?.requestFocus()
+                    tv_resend.visibility = VISIBLE
+                    showKeyboard(codePage?.et_code_1 as View)
+                    displayCodeInputPage()
+                }
+                state.success -> completeSubmitButtonAnimation()
+                else -> {
+                    showError(state.errorMessage)
+                }
+            }
+        }
     }
 
     private fun initViews() {
@@ -65,26 +100,28 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
         phoneNumberPage?.s_country_code?.setSelection(getDefaultCountryPosition())
     }
 
-    override fun getVerifyCodeEvent(): Observable<VerifyCodeEvent> {
-        return Observable.merge(
+    private fun bind() {
+        loginViewModel.states().subscribe(this::render)
+        loginViewModel.processIntents(intents())
+    }
+
+    private fun verifyCodeIntent() =
+            Observable.merge(
                     codePage?.et_code_6?.editorActions()?.filter { validateCode() },
                     btn_submit.clicks().filter { vp_container.currentItem == PAGE_CODE }
-                )
-                .bindToLifecycle(provider)
-                .map { VerifyCodeEvent(getUserInputtedCode()) }
-    }
+            ).bindToLifecycle(provider)
+                    .map { LoginIntent.VerifyCodeIntent(getUserInputtedCode()) }
 
-    override fun getCodeRequestEvent(): Observable<RequestCodeEvent> {
-        return Observable.merge(
+    private fun attemptLoginIntent() =
+            Observable.merge(
                     phoneNumberPage?.et_number?.editorActions()?.filter { validateNumber() },
                     btn_submit.clicks().filter { vp_container.currentItem == PAGE_PHONE_NUMBER }
-                )
-                .bindToLifecycle(provider)
-                .map { RequestCodeEvent(getUserInputtedNumber()) }
-    }
+            )
+                    .bindToLifecycle(provider)
+                    .map { LoginIntent.AttemptLoginIntent(getUserInputtedNumber()) }
 
-    override fun getValidateCodeEvent(): Observable<ValidateCodeEvent> {
-        return Observable.merge(
+
+    private fun validateCodeIntent() = Observable.merge(
                 Arrays.asList(
                     codePage?.et_code_1?.textChanges(),
                     codePage?.et_code_2?.textChanges(),
@@ -95,64 +132,39 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
                 ))
                 .bindToLifecycle(provider)
                 .map {
-                    ValidateCodeEvent(getUserInputtedCode())
+                    LoginIntent.ValidateCodeIntent(getUserInputtedCode())
                 }
-    }
 
-    override fun getValidatePhoneNumberEvent(): Observable<ValidatePhoneNumberEvent>? {
-        return phoneNumberPage?.et_number?.textChanges()
+    private fun validatePhoneNumberIntent() = phoneNumberPage?.et_number?.textChanges()
                 ?.bindToLifecycle(provider)
                 ?.map {
-                    ValidatePhoneNumberEvent(it.toString())
+                    if(it.isEmpty()) LoginIntent.ValidatePhoneNumberIntent(0)
+                    else LoginIntent.ValidatePhoneNumberIntent(it.toString().toLong())
                 }
-    }
     
     private fun initObservation() {
-        presenter.uiObservable
-                .bindToLifecycle(provider)
-                .subscribe({ model ->
-                    animateSubmitButton(model.inProgress)
-                    enableInputFields(!model.inProgress)
-                    enableSubmitButton(!model.invalid)
-                    if(!model.inProgress){
-                        when {
-                            model.codeSent -> {
-                                codePage?.tv_phone_number?.text = getString(R.string.tap_to_edit, model.phoneNumber)
-                                codePage?.et_code_1?.requestFocus()
-                                tv_resend.visibility = VISIBLE
-                                showKeyboard(codePage?.et_code_1 as View)
-                                displayCodeInputPage()
-                            }
-                            model.success -> completeSubmitButtonAnimation()
-                            else -> {
-                                showError(model.errorMessage)
-                            }
-                        }
-                    }
-                })
-                { t -> showError(t.localizedMessage) }.track()
 
         vp_container.pageSelections()
                 .subscribe{ page ->
                     revertSubmitButton()
                     validateSubmitButton()
                     updateUI(page)
-                }?.track()
+                }
 
         codePage?.tv_phone_number?.clicks()
                 ?.subscribe{
                     displayPhoneNumberInputPage()
-                }?.track()
-
+                }
+/*
         tv_resend?.clicks()
                 ?.doOnNext { hideKeyboard() }
                 ?.map { presenter.resendCode(phoneNumber.toString().toLong()) }
                 ?.subscribe{
                     showSuccess(R.string.code_resent)
-                }?.track()
+                }?.track()*/
     }
 
-    override fun animateSubmitButton(animate : Boolean){
+    private fun animateSubmitButton(animate : Boolean){
         if(animate){
             btn_submit.startAnimation()
         }else{
@@ -160,7 +172,7 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
         }
     }
 
-    override fun enableInputFields(enable : Boolean) {
+    private fun enableInputFields(enable : Boolean) {
         phoneNumberPage?.et_number?.isEnabled = enable
         phoneNumberPage?.s_country_code?.isEnabled = enable
         codePage?.et_code_1?.isEnabled = enable
@@ -189,7 +201,7 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
         enableSubmitButton(if(vp_container.currentItem == PAGE_PHONE_NUMBER) validateNumber() else validateCode() )
     }
 
-    override fun completeSubmitButtonAnimation() {
+    private fun completeSubmitButtonAnimation() {
         // @TODO add success animation
     }
 
@@ -210,11 +222,11 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
         }
     }
 
-    override fun displayCodeInputPage() {
+    private fun displayCodeInputPage() {
         vp_container.currentItem = PAGE_CODE
     }
 
-    override fun displayPhoneNumberInputPage() {
+    private fun displayPhoneNumberInputPage() {
         vp_container.currentItem = PAGE_PHONE_NUMBER
     }
 
@@ -249,27 +261,27 @@ class LoginActivity : BaseActivity<LoginContract.View, LoginContract.Presenter>(
         return (phoneNumberPage?.s_country_code?.selectedItem.toString().split("+")[1] + phoneNumberPage?.et_number?.text.toString().toLong()).toLong()
     }
 
-    override fun showError(error: String?) {
+    private fun showError(error: String?) {
         if(error != null){
             whiteLongSnackBar(btn_submit,error,R.color.colorPrimaryDark)
             revertSubmitButton()
         }
     }
 
-    override fun showError(error: Int) {
+    private fun showError(error: Int) {
         showError(getString(error))
     }
 
-    override fun showSuccess(message: String) {
+    private fun showSuccess(message: String) {
         whiteLongSnackBar(btn_submit,message,R.color.colorSuccess)
         revertSubmitButton()
     }
 
-    override fun showSuccess(message: Int) {
+    private fun showSuccess(message: Int) {
         showSuccess(getString(message))
     }
 
-    override fun setSubmitButtonText(text: String) {
+    private fun setSubmitButtonText(text: String) {
         btn_submit.text = text
     }
 

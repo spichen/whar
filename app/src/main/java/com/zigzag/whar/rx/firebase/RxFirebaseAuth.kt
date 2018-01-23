@@ -88,8 +88,8 @@ open class RxFirebaseAuth {
         }
     }
 
-    open fun signInWithCode(verificationId: String, code : Number): Observable<Boolean> {
-        return signInWithPhoneAuthCredential(PhoneAuthProvider.getCredential(verificationId, code.toString()))
+    open fun signInWithCode(verificationId: String?, code : Number): Observable<Boolean> {
+        return signInWithPhoneAuthCredential(PhoneAuthProvider.getCredential(verificationId!!, code.toString()))
     }
 
     open fun updateUserDetails(name : String, image : Uri? = null): Maybe<String> {

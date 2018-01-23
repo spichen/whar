@@ -2,7 +2,6 @@ package com.zigzag.whar.ui.login
 
 import com.zigzag.whar.arch.BaseContract
 import io.reactivex.Observable
-import io.reactivex.observables.ConnectableObservable
 
 /**
  * Created by salah on 30/12/17.
