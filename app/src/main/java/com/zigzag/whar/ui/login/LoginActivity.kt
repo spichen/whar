@@ -25,7 +25,7 @@ import com.jakewharton.rxbinding2.support.v4.view.pageSelections
 import java.util.*
 import com.trello.rxlifecycle2.kotlin.bindToLifecycle
 import com.zigzag.whar.arch.BaseActivity
-import com.zigzag.whar.ui.login.LoginModels.*
+import com.zigzag.whar.ui.login.LoginDataHolder.*
 
 class LoginActivity : BaseActivity<LoginIntent,LoginViewState,LoginViewModel>() {
 
@@ -40,7 +40,7 @@ class LoginActivity : BaseActivity<LoginIntent,LoginViewState,LoginViewModel>() 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        viewModel = provideViewModel()
+        viewModel = provideViewModel<LoginViewModel>()
 
         initViews()
         initObservation()

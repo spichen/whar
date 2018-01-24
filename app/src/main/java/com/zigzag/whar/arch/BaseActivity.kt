@@ -27,11 +27,6 @@ abstract class BaseActivity<I : BaseIntent, S : BaseViewState, VM : BaseViewMode
 
     lateinit var viewModel : VM
 
-    @CallSuper
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onStart() {
         super.onStart()
         bind()
@@ -76,5 +71,4 @@ abstract class BaseActivity<I : BaseIntent, S : BaseViewState, VM : BaseViewMode
             }
         }
     }
-
 }

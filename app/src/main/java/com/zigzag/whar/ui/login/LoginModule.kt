@@ -4,6 +4,8 @@ import android.arch.lifecycle.ViewModel
 import com.zigzag.whar.di.ActivityScoped
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
+
 
 /**
  * Created by salah on 20/12/17.

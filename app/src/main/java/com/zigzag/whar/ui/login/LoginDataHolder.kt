@@ -9,7 +9,7 @@ import com.zigzag.whar.rx.firebase.VerificationData
 /**
  * Created by salah on 25/1/18.
  */
-sealed class LoginModels {
+class LoginDataHolder {
     sealed class LoginAction : BaseAction {
         object IdleAction : LoginAction()
         data class LoginAttemptAction(val phoneNumber: Number) : LoginAction()
@@ -25,7 +25,6 @@ sealed class LoginModels {
         data class ValidatePhoneNumberIntent(var number: Number) : LoginIntent()
         data class ValidateCodeIntent(var code: Number) : LoginIntent()
     }
-
 
     sealed class LoginResult : BaseResult {
         sealed class LoginAttemptResult : LoginResult() {
