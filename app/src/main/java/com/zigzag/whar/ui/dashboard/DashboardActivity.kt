@@ -3,6 +3,7 @@ package com.zigzag.whar.ui.dashboard
 import android.Manifest
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.zigzag.whar.R
@@ -15,9 +16,8 @@ import javax.inject.Inject
 import android.view.MenuItem
 import com.google.firebase.auth.FirebaseAuth
 
-
-class DashboardActivity :  BaseActivity<DashboardContract.View, DashboardContract.Presenter>(), DashboardContract.View {
-
+class DashboardActivity : AppCompatActivity()/*:  BaseActivity<DashboardContract.View, DashboardContract.Presenter>(), DashboardContract.View*/ {
+/*
     @Inject
     lateinit var feedsFragment : FeedsFragment
 
@@ -74,5 +74,5 @@ class DashboardActivity :  BaseActivity<DashboardContract.View, DashboardContrac
             FirebaseAuth.getInstance().signOut()
         }
         return super.onOptionsItemSelected(item)
-    }
+    }*/
 }

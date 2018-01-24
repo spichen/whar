@@ -5,8 +5,7 @@ import android.util.Log
 import com.google.android.gms.location.LocationRequest
 import com.google.firebase.firestore.GeoPoint
 import com.salah.geohash.GeoHash
-import com.zigzag.whar.arch.BasePresenter
-import com.zigzag.whar.common.Constants
+import com.zigzag.whar.old.BasePresenter
 import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 import javax.inject.Inject
 

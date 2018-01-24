@@ -1,14 +1,12 @@
 package com.zigzag.whar.ui.login
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
+import android.support.annotation.CallSuper
 import com.jakewharton.rxbinding2.widget.textChanges
 import com.zigzag.whar.R
-import com.zigzag.whar.arch.BaseActivity
 import com.zigzag.whar.common.Utils
 import kotlinx.android.synthetic.main.activity_login.*
-import javax.inject.Inject
 import android.widget.ArrayAdapter
 import com.jakewharton.rxbinding2.view.clicks
 import android.telephony.TelephonyManager
@@ -25,16 +23,11 @@ import kotlinx.android.synthetic.main.page_code.view.*
 import android.view.inputmethod.InputMethodManager
 import com.jakewharton.rxbinding2.support.v4.view.pageSelections
 import java.util.*
-import com.trello.lifecycle2.android.lifecycle.AndroidLifecycle
 import com.trello.rxlifecycle2.kotlin.bindToLifecycle
-import com.zigzag.whar.mviarch.BaseView
-import dagger.android.support.DaggerAppCompatActivity
-import android.arch.lifecycle.ViewModelProvider
+import com.zigzag.whar.arch.BaseActivity
+import com.zigzag.whar.ui.login.LoginModels.*
 
-class LoginActivity : DaggerAppCompatActivity(), BaseView<LoginIntent,LoginViewState>{
-
-    @Inject
-    lateinit var mViewModelFactory: ViewModelProvider.Factory
+class LoginActivity : BaseActivity<LoginIntent,LoginViewState,LoginViewModel>() {
 
     companion object {
         const val PAGE_PHONE_NUMBER = 0
@@ -44,17 +37,18 @@ class LoginActivity : DaggerAppCompatActivity(), BaseView<LoginIntent,LoginViewS
     var phoneNumberPage : View? = null
     var codePage : View? = null
 
-    private val provider = AndroidLifecycle.createLifecycleProvider(this)
-
-    private lateinit var loginViewModel: LoginViewModel
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        loginViewModel = ViewModelProviders.of(this, mViewModelFactory).get(LoginViewModel::class.java)
+        viewModel = provideViewModel()
+
         initViews()
         initObservation()
-        bind()
+    }
+
+    @CallSuper
+    override fun onStart() {
+        super.onStart()
     }
 
     override fun intents(): Observable<LoginIntent> {
@@ -100,25 +94,18 @@ class LoginActivity : DaggerAppCompatActivity(), BaseView<LoginIntent,LoginViewS
         phoneNumberPage?.s_country_code?.setSelection(getDefaultCountryPosition())
     }
 
-    private fun bind() {
-        loginViewModel.states().subscribe(this::render)
-        loginViewModel.processIntents(intents())
-    }
 
     private fun verifyCodeIntent() =
             Observable.merge(
                     codePage?.et_code_6?.editorActions()?.filter { validateCode() },
                     btn_submit.clicks().filter { vp_container.currentItem == PAGE_CODE }
-            ).bindToLifecycle(provider)
-                    .map { LoginIntent.VerifyCodeIntent(getUserInputtedCode()) }
+            ).bindToLifecycle(provider).map { LoginIntent.VerifyCodeIntent(getUserInputtedCode()) }
 
     private fun attemptLoginIntent() =
             Observable.merge(
                     phoneNumberPage?.et_number?.editorActions()?.filter { validateNumber() },
                     btn_submit.clicks().filter { vp_container.currentItem == PAGE_PHONE_NUMBER }
-            )
-                    .bindToLifecycle(provider)
-                    .map { LoginIntent.AttemptLoginIntent(getUserInputtedNumber()) }
+            ).bindToLifecycle(provider).map { LoginIntent.AttemptLoginIntent(getUserInputtedNumber()) }
 
 
     private fun validateCodeIntent() = Observable.merge(

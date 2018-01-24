@@ -1,7 +1,7 @@
 package com.zigzag.whar.ui.profileEdit
 
 import android.net.Uri
-import com.zigzag.whar.arch.BaseContract
+import com.zigzag.whar.old.BaseContract
 
 /**
  * Created by salah on 13/1/18.

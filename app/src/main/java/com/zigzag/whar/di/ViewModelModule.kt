@@ -1,14 +1,7 @@
 package com.zigzag.whar.di
 
-import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import com.zigzag.whar.ViewModelFactory
-import com.zigzag.whar.rx.firebase.RxFirebaseAuth
-import com.zigzag.whar.rx.firebase.RxFirebaseFirestore
-import com.zigzag.whar.rx.firebase.RxFirebaseStorage
-import com.zigzag.whar.ui.login.LoginViewModel
-
-import javax.inject.Singleton
+import com.zigzag.whar.common.ViewModelFactory
 
 import dagger.Module
 import dagger.Provides
@@ -21,14 +14,8 @@ import dagger.Provides
 class ViewModelModule {
 
     @Provides
-    fun provideLoginViewModel(viewModel: LoginViewModel): ViewModel {
-        return viewModel
-    }
-
-    @Provides
-    fun provideWharViewModelFactory(
-            factory: ViewModelFactory
-    ): ViewModelProvider.Factory {
+    fun provideViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory {
         return factory
     }
+
 }

@@ -1,64 +1,74 @@
 package com.zigzag.whar.ui.login
 
+import com.zigzag.whar.arch.BaseAction
+import com.zigzag.whar.arch.BaseIntent
+import com.zigzag.whar.arch.BaseResult
+import com.zigzag.whar.arch.BaseViewState
+import com.zigzag.whar.rx.firebase.VerificationData
+
 /**
- * Created by salah on 23/1/18.
+ * Created by salah on 25/1/18.
  */
+sealed class LoginModels {
+    sealed class LoginAction : BaseAction {
+        object IdleAction : LoginAction()
+        data class LoginAttemptAction(val phoneNumber: Number) : LoginAction()
+        data class VerifyCodeAction(val code: Number, val verificationId : String?) : LoginAction()
+        data class ValidatePhoneNumberAction(val phoneNumber: Number) : LoginAction()
+        data class ValidateCodeAction(val code: Number) :  LoginAction()
+    }
 
-abstract class Results(val failure : Boolean = false, var errorMessage : String? = null) {
-    constructor() : this(false,null)
-}
-abstract class SubmitEvent
+    sealed class LoginIntent : BaseIntent {
+        object InitialIntent : LoginIntent()
+        data class AttemptLoginIntent(var number: Number) : LoginIntent()
+        data class VerifyCodeIntent(var code: Number) : LoginIntent()
+        data class ValidatePhoneNumberIntent(var number: Number) : LoginIntent()
+        data class ValidateCodeIntent(var code: Number) : LoginIntent()
+    }
 
-class RequestCodeResult(val inFlight : Boolean, val success: Boolean, val codeSent: Boolean, failure: Boolean = false, errorMessage: String? = null) : Results(failure,errorMessage) {
-    companion object {
-        val IN_FLIGHT = RequestCodeResult(true,false,false)
-        val SUCCESS = RequestCodeResult(false,true,false)
-        val CODE_SENT = RequestCodeResult(false,false,true)
-        fun failure(errorMessage: String?): RequestCodeResult {
-            return RequestCodeResult(false,false,false,true,errorMessage)
+
+    sealed class LoginResult : BaseResult {
+        sealed class LoginAttemptResult : LoginResult() {
+            object InFlight : LoginAttemptResult()
+            object Success : LoginAttemptResult()
+            data class CodeSent(val phoneNumber : Number,val verificationData: VerificationData) : LoginAttemptResult()
+            data class Failure(val error: Throwable) : LoginAttemptResult()
+        }
+
+        sealed class VerifyCodeResult : LoginResult() {
+            object InFlight : VerifyCodeResult()
+            object Success : VerifyCodeResult()
+            data class Failure(val error: Throwable) : VerifyCodeResult()
+        }
+
+        sealed class ValidatePhoneNumberResult : LoginResult() {
+            object Valid : ValidatePhoneNumberResult()
+            object Invalid : ValidatePhoneNumberResult()
+        }
+
+        sealed class ValidateCodeResult : LoginResult() {
+            object Valid : ValidateCodeResult()
+            object Invalid : ValidateCodeResult()
         }
     }
-}
-class VerifyCodeResult(val inFlight : Boolean, val success: Boolean, failure: Boolean = false, errorMessage: String? = null) : Results(failure,errorMessage) {
-    companion object {
-        val IN_FLIGHT = VerifyCodeResult(true,false)
-        val SUCCESS = VerifyCodeResult(false,true)
-        fun failure(errorMessage: String?): VerifyCodeResult {
-            return VerifyCodeResult(false,false,true,errorMessage)
+
+    data class LoginViewState(
+            var invalid : Boolean,
+            var inProgress : Boolean,
+            var success : Boolean,
+            var codeSent :  Boolean = false,
+            var errorMessage : String? = null,
+            var lastPhoneNumber : Number? = null
+    ) : BaseViewState {
+        companion object {
+            fun idle(): LoginViewState {
+                return LoginViewState(
+                        invalid = false,
+                        inProgress = false,
+                        success = false,
+                        codeSent = false,
+                        errorMessage = null)
+            }
         }
-    }
-}
-
-class ValidatePhoneNumberResult(val isValid : Boolean) : Results() {
-    companion object {
-        val VALID = ValidatePhoneNumberResult(true)
-        val INVALID = ValidatePhoneNumberResult(false)
-    }
-}
-class ValidateCodeResult(val isValid : Boolean) : Results(){
-    companion object {
-        val VALID = ValidateCodeResult(true)
-        val INVALID = ValidateCodeResult(false)
-    }
-}
-
-class RequestCodeEvent(var number: Number) : SubmitEvent()
-class VerifyCodeEvent(var code: Number) : SubmitEvent()
-class ValidatePhoneNumberEvent(var number: String) : SubmitEvent()
-class ValidateCodeEvent(var code: Number) : SubmitEvent()
-
-class SubmitUiModel(var invalid : Boolean, var inProgress : Boolean,var success : Boolean,var codeSent :  Boolean = false ,var errorMessage : String? = null){
-    var phoneNumber : Number = 0
-    companion object {
-        fun idle() = SubmitUiModel(false,false,false,false)
-        fun invalid() = SubmitUiModel(true,false,false,false)
-        fun inProgress() = SubmitUiModel(false,true,false)
-        fun codeSent(to : Number) :SubmitUiModel {
-            val submitUiModel = SubmitUiModel(false,false,false,true)
-            submitUiModel.phoneNumber = to
-            return submitUiModel
-        }
-        fun success() = SubmitUiModel(false,false,true)
-        fun failure(errorMessage: String?) = SubmitUiModel(false,false,false,false, errorMessage?.split(".")?.get(0))
     }
 }

@@ -2,7 +2,7 @@ package com.zigzag.whar.ui.profileEdit
 
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
-import com.zigzag.whar.arch.BasePresenter
+import com.zigzag.whar.old.BasePresenter
 import com.zigzag.whar.common.Constants.DATE_OF_BIRTH
 import com.zigzag.whar.common.Constants.FIRST_NAME
 import com.zigzag.whar.common.Constants.LAST_NAME

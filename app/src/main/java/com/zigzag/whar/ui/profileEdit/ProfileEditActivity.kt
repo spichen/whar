@@ -13,12 +13,13 @@ import kotlinx.android.synthetic.main.activity_profile_edit.*
 import javax.inject.Inject
 import android.content.Intent
 import android.net.Uri
+import android.support.v7.app.AppCompatActivity
 import com.jakewharton.rxbinding2.widget.editorActions
 import com.squareup.picasso.Picasso
 import com.zigzag.whar.ui.dashboard.DashboardActivity
 
-class ProfileEditActivity : BaseActivity<ProfileEditContract.View, ProfileEditContract.Presenter>(), ProfileEditContract.View{
-
+class ProfileEditActivity : AppCompatActivity() /*BaseActivity<ProfileEditContract.View, ProfileEditContract.Presenter>(), ProfileEditContract.View*/{
+/*
     @Inject lateinit var profileEditActivityPresenter : ProfileEditPresenter
 
     private var profileImageUri : Uri? = null
@@ -133,5 +134,5 @@ class ProfileEditActivity : BaseActivity<ProfileEditContract.View, ProfileEditCo
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         validate()
-    }
+    }*/
 }

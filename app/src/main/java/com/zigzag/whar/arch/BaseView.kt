@@ -1,4 +1,4 @@
-package com.zigzag.whar.mviarch
+package com.zigzag.whar.arch
 
 import io.reactivex.Observable
 

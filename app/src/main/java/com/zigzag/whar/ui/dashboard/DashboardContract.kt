@@ -1,6 +1,6 @@
 package com.zigzag.whar.ui.dashboard
 
-import com.zigzag.whar.arch.BaseContract
+import com.zigzag.whar.old.BaseContract
 
 /**
  * Created by salah on 30/12/17.

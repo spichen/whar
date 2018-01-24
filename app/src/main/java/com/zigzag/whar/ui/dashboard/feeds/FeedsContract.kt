@@ -1,6 +1,6 @@
 package com.zigzag.whar.ui.dashboard.feeds
 
-import com.zigzag.whar.arch.BaseContract
+import com.zigzag.whar.old.BaseContract
 import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 
 /**

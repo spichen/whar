@@ -1,6 +1,6 @@
 package com.zigzag.whar.ui.dashboard
 
-import com.zigzag.whar.arch.BasePresenter
+import com.zigzag.whar.old.BasePresenter
 import com.zigzag.whar.di.ActivityScoped
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.zigzag.whar.arch
+package com.zigzag.whar.old
 
 import android.arch.lifecycle.Lifecycle
 import android.os.Bundle
@@ -14,7 +14,7 @@ interface BaseContract {
         fun authRedirect(user : FirebaseUser?)
     }
 
-    interface Presenter<V : BaseContract.View> {
+    interface Presenter<V : View> {
 
         val stateBundle: Bundle?
 

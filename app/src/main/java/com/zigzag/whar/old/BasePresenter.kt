@@ -1,4 +1,4 @@
-package com.zigzag.whar.arch
+package com.zigzag.whar.old
 
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver

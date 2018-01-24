@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.view.View
 import com.google.firebase.auth.FirebaseUser
+import com.zigzag.whar.old.BaseContract
+import com.zigzag.whar.old.BaseViewModel
 
 import dagger.android.support.DaggerFragment
 
@@ -22,7 +24,7 @@ abstract class BaseFragment<V : BaseContract.View, P : BaseContract.Presenter<V>
     @CallSuper
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val viewModel = ViewModelProviders.of(this).get(BaseViewModel<V,P>()::class.java)
+        val viewModel = ViewModelProviders.of(this).get(BaseViewModel<V, P>()::class.java)
         if (viewModel.presenter == null) {
             viewModel.presenter = getPresenterImpl()
             isPresenterCreated = true
