@@ -8,7 +8,6 @@ import com.mlsdev.rximagepicker.Sources
 import com.salah.rxdatetimepicker.RxDateConverters
 import com.salah.rxdatetimepicker.RxDateTimePicker
 import com.zigzag.whar.R
-import com.zigzag.whar.arch.BaseActivity
 import kotlinx.android.synthetic.main.activity_profile_edit.*
 import javax.inject.Inject
 import android.content.Intent

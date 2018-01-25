@@ -1,43 +1,43 @@
 package com.zigzag.whar.ui.login
 
+import com.zigzag.arch.BaseViewModel
 import com.zigzag.whar.common.notOfType
-import com.zigzag.whar.arch.BaseViewModel
 import com.zigzag.whar.rx.firebase.VerificationData
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.PublishSubject
-import com.zigzag.whar.ui.login.LoginDataHolder.*
+import com.zigzag.whar.ui.login.LoginDataModel.*
 import javax.inject.Inject
 
 /**
  * Created by salah on 23/1/18.
  */
 
-class LoginViewModel @Inject constructor(val processor: LoginProcessor) : BaseViewModel<LoginIntent, LoginViewState>() {
+class LoginViewModel @Inject constructor(val processor: LoginProcessor) : BaseViewModel<LoginEvent, LoginViewState>() {
 
-    private val intentsSubject: PublishSubject<LoginIntent> = PublishSubject.create()
+    private val intentsSubject: PublishSubject<LoginEvent> = PublishSubject.create()
     private val statesObservable: Observable<LoginViewState> = compose()
 
-    override fun processIntents(intents: Observable<LoginIntent>) {
+    override fun processIntents(intents: Observable<LoginEvent>) {
         intents.subscribe(intentsSubject)
     }
 
     override fun states(): Observable<LoginViewState> = statesObservable
 
-    private val intentFilter: ObservableTransformer<LoginIntent, LoginIntent>
+    private val intentFilter: ObservableTransformer<LoginEvent, LoginEvent>
         get() = ObservableTransformer { intents ->
             intents.publish { shared ->
-                Observable.merge<LoginIntent>(
-                        shared.ofType(LoginIntent.InitialIntent::class.java).take(1),
-                        shared.notOfType(LoginIntent.InitialIntent::class.java)
+                Observable.merge<LoginEvent>(
+                        shared.ofType(LoginEvent.InitialEvent::class.java).take(1),
+                        shared.notOfType(LoginEvent.InitialEvent::class.java)
                 )
             }
         }
 
     private fun compose(): Observable<LoginViewState> {
         return intentsSubject
-                .compose<LoginIntent>(intentFilter)
+                .compose<LoginEvent>(intentFilter)
                 .map(this::actionFromIntent)
                 .compose(processor.actionProcessor())
                 .scan(LoginViewState.idle(), reducer)
@@ -46,12 +46,12 @@ class LoginViewModel @Inject constructor(val processor: LoginProcessor) : BaseVi
     }
 
 
-    private fun actionFromIntent(intent: LoginIntent): LoginAction {
+    private fun actionFromIntent(intent: LoginEvent): LoginAction {
         return when (intent) {
-            is LoginIntent.AttemptLoginIntent -> LoginAction.LoginAttemptAction(intent.number)
-            is LoginIntent.VerifyCodeIntent -> LoginAction.VerifyCodeAction(intent.code, verificationData?.verificationId)
-            is LoginIntent.ValidatePhoneNumberIntent -> LoginAction.ValidatePhoneNumberAction(intent.number)
-            is LoginIntent.ValidateCodeIntent -> LoginAction.ValidateCodeAction(intent.code)
+            is LoginEvent.AttemptLoginEvent -> LoginAction.LoginAttemptAction(intent.number)
+            is LoginEvent.VerifyCodeEvent -> LoginAction.VerifyCodeAction(intent.code, verificationData?.verificationId)
+            is LoginEvent.ValidatePhoneNumberEvent -> LoginAction.ValidatePhoneNumberAction(intent.number)
+            is LoginEvent.ValidateCodeEvent -> LoginAction.ValidateCodeAction(intent.code)
             else -> {
                 LoginAction.IdleAction
             }

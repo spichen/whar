@@ -1,19 +1,16 @@
 package com.zigzag.whar.ui.dashboard.feeds
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.jakewharton.rxbinding2.view.clicks
 import com.zigzag.whar.R
-import com.zigzag.whar.arch.BaseFragment
 import com.zigzag.whar.di.ActivityScoped
-import kotlinx.android.synthetic.main.fragment_dashboard.*
 import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 import javax.inject.Inject
 import com.google.firebase.firestore.FirebaseFirestore
 import com.zigzag.whar.firestore.FirestoreRecyclerOptions
-import android.support.v4.widget.SearchViewCompat.setQuery
 import com.google.firebase.firestore.DocumentSnapshot
 import com.zigzag.whar.common.firebase.ChangeEventType
 import com.zigzag.whar.model.Message
@@ -21,12 +18,9 @@ import com.zigzag.whar.firestore.FirestoreRecyclerAdapter
 import com.zigzag.whar.viewholders.MessageViewHolder
 import android.support.v7.widget.LinearLayoutManager
 
-
-
-
 @ActivityScoped
-class FeedsFragment @Inject constructor(): BaseFragment<FeedsContract.View, FeedsContract.Presenter>(), FeedsContract.View {
-
+class FeedsFragment @Inject constructor() : Fragment()/* BaseFragment<FeedsContract.View, FeedsContract.Presenter>(), FeedsContract.View */{
+/*
     @Inject lateinit var feedsPresenter : FeedsPresenter
 
     override fun getPresenterImpl(): FeedsContract.Presenter = feedsPresenter
@@ -93,6 +87,6 @@ class FeedsFragment @Inject constructor(): BaseFragment<FeedsContract.View, Feed
 
     override fun tempShowLocation(location : String) {
         tv_temp.text = location
-    }
+    }*/
 
 }

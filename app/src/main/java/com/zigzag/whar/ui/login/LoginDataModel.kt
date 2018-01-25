@@ -1,15 +1,16 @@
 package com.zigzag.whar.ui.login
 
-import com.zigzag.whar.arch.BaseAction
-import com.zigzag.whar.arch.BaseIntent
-import com.zigzag.whar.arch.BaseResult
-import com.zigzag.whar.arch.BaseViewState
+import com.zigzag.arch.BaseAction
+import com.zigzag.arch.BaseEvent
+import com.zigzag.arch.BaseResult
+import com.zigzag.arch.BaseViewState
 import com.zigzag.whar.rx.firebase.VerificationData
 
 /**
  * Created by salah on 25/1/18.
  */
-class LoginDataHolder {
+
+class LoginDataModel {
     sealed class LoginAction : BaseAction {
         object IdleAction : LoginAction()
         data class LoginAttemptAction(val phoneNumber: Number) : LoginAction()
@@ -18,12 +19,12 @@ class LoginDataHolder {
         data class ValidateCodeAction(val code: Number) :  LoginAction()
     }
 
-    sealed class LoginIntent : BaseIntent {
-        object InitialIntent : LoginIntent()
-        data class AttemptLoginIntent(var number: Number) : LoginIntent()
-        data class VerifyCodeIntent(var code: Number) : LoginIntent()
-        data class ValidatePhoneNumberIntent(var number: Number) : LoginIntent()
-        data class ValidateCodeIntent(var code: Number) : LoginIntent()
+    sealed class LoginEvent : BaseEvent {
+        object InitialEvent : LoginEvent()
+        data class AttemptLoginEvent(var number: Number) : LoginEvent()
+        data class VerifyCodeEvent(var code: Number) : LoginEvent()
+        data class ValidatePhoneNumberEvent(var number: Number) : LoginEvent()
+        data class ValidateCodeEvent(var code: Number) : LoginEvent()
     }
 
     sealed class LoginResult : BaseResult {

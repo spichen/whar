@@ -1,1 +1,1 @@
-include ':app', ':geohash'
+include ':app', ':geohash', ':arch'

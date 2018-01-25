@@ -4,7 +4,6 @@ package com.zigzag.whar.di
  * Created by salah on 30/12/17.
  */
 
-import com.zigzag.whar.arch.BaseActivity
 import com.zigzag.whar.ui.dashboard.DashboardActivity
 import com.zigzag.whar.ui.dashboard.DashboardModule
 import com.zigzag.whar.ui.login.LoginActivity

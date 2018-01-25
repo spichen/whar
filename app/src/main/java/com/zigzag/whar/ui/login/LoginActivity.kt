@@ -1,5 +1,6 @@
 package com.zigzag.whar.ui.login
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.CallSuper
@@ -23,11 +24,16 @@ import kotlinx.android.synthetic.main.page_code.view.*
 import android.view.inputmethod.InputMethodManager
 import com.jakewharton.rxbinding2.support.v4.view.pageSelections
 import java.util.*
-import com.trello.rxlifecycle2.kotlin.bindToLifecycle
-import com.zigzag.whar.arch.BaseActivity
-import com.zigzag.whar.ui.login.LoginDataHolder.*
+import com.zigzag.arch.BaseActivity
+import com.zigzag.whar.ui.login.LoginDataModel.*
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.HasActivityInjector
+import javax.inject.Inject
 
-class LoginActivity : BaseActivity<LoginIntent,LoginViewState,LoginViewModel>() {
+class LoginActivity : BaseActivity<LoginEvent,LoginViewState,LoginViewModel>() {
+    @Inject
+    lateinit var loginViewModel : LoginViewModel
 
     companion object {
         const val PAGE_PHONE_NUMBER = 0
@@ -39,8 +45,9 @@ class LoginActivity : BaseActivity<LoginIntent,LoginViewState,LoginViewModel>() 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidInjection.inject(this)
         setContentView(R.layout.activity_login)
-        viewModel = provideViewModel<LoginViewModel>()
+        provideViewModel<LoginViewModel>(loginViewModel)
 
         initViews()
         initObservation()
@@ -51,7 +58,7 @@ class LoginActivity : BaseActivity<LoginIntent,LoginViewState,LoginViewModel>() 
         super.onStart()
     }
 
-    override fun intents(): Observable<LoginIntent> {
+    override fun intents(): Observable<LoginEvent> {
         return Observable.merge(
                 attemptLoginIntent(),
                 verifyCodeIntent(),
@@ -99,13 +106,13 @@ class LoginActivity : BaseActivity<LoginIntent,LoginViewState,LoginViewModel>() 
             Observable.merge(
                     codePage?.et_code_6?.editorActions()?.filter { validateCode() },
                     btn_submit.clicks().filter { vp_container.currentItem == PAGE_CODE }
-            ).bindToLifecycle(provider).map { LoginIntent.VerifyCodeIntent(getUserInputtedCode()) }
+            ).map { LoginEvent.VerifyCodeEvent(getUserInputtedCode()) }
 
     private fun attemptLoginIntent() =
             Observable.merge(
                     phoneNumberPage?.et_number?.editorActions()?.filter { validateNumber() },
                     btn_submit.clicks().filter { vp_container.currentItem == PAGE_PHONE_NUMBER }
-            ).bindToLifecycle(provider).map { LoginIntent.AttemptLoginIntent(getUserInputtedNumber()) }
+            ).map { LoginEvent.AttemptLoginEvent(getUserInputtedNumber()) }
 
 
     private fun validateCodeIntent() = Observable.merge(
@@ -117,16 +124,14 @@ class LoginActivity : BaseActivity<LoginIntent,LoginViewState,LoginViewModel>() 
                     codePage?.et_code_5?.textChanges(),
                     codePage?.et_code_6?.textChanges()
                 ))
-                .bindToLifecycle(provider)
                 .map {
-                    LoginIntent.ValidateCodeIntent(getUserInputtedCode())
+                    LoginEvent.ValidateCodeEvent(getUserInputtedCode())
                 }
 
     private fun validatePhoneNumberIntent() = phoneNumberPage?.et_number?.textChanges()
-                ?.bindToLifecycle(provider)
                 ?.map {
-                    if(it.isEmpty()) LoginIntent.ValidatePhoneNumberIntent(0)
-                    else LoginIntent.ValidatePhoneNumberIntent(it.toString().toLong())
+                    if(it.isEmpty()) LoginEvent.ValidatePhoneNumberEvent(0)
+                    else LoginEvent.ValidatePhoneNumberEvent(it.toString().toLong())
                 }
     
     private fun initObservation() {

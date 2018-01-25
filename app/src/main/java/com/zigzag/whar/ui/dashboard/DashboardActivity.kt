@@ -4,17 +4,6 @@ import android.Manifest
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.view.Menu
-import com.tbruyelle.rxpermissions2.RxPermissions
-import com.zigzag.whar.R
-import com.zigzag.whar.arch.BaseActivity
-import com.zigzag.whar.common.ActivityUtils
-import com.zigzag.whar.ui.dashboard.feeds.FeedsFragment
-import com.zigzag.whar.ui.dashboard.fragments.PermissionFragment
-import kotlinx.android.synthetic.main.activity_dashboard.*
-import javax.inject.Inject
-import android.view.MenuItem
-import com.google.firebase.auth.FirebaseAuth
 
 class DashboardActivity : AppCompatActivity()/*:  BaseActivity<DashboardContract.View, DashboardContract.Presenter>(), DashboardContract.View*/ {
 /*

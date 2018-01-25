@@ -19,7 +19,7 @@ class LoginProcessor @Inject constructor() {
     lateinit var rxFirebaseAuth : RxFirebaseAuth
 
     private val processLoginAttempt =
-            ObservableTransformer<LoginDataHolder.LoginAction.LoginAttemptAction, LoginDataHolder.LoginResult.LoginAttemptResult> { actions ->
+            ObservableTransformer<LoginDataModel.LoginAction.LoginAttemptAction, LoginDataModel.LoginResult.LoginAttemptResult> { actions ->
                 actions.flatMap { action ->
                     rxFirebaseAuth.phoneAuthProvider(action.phoneNumber)
                             .compose {
@@ -33,55 +33,55 @@ class LoginProcessor @Inject constructor() {
                             }
                             .map {
                                 when (it) {
-                                    is Boolean -> LoginDataHolder.LoginResult.LoginAttemptResult.Success
-                                    is VerificationData -> LoginDataHolder.LoginResult.LoginAttemptResult.CodeSent(action.phoneNumber, it)
-                                    else -> LoginDataHolder.LoginResult.LoginAttemptResult.Failure(Throwable("Unknown Error"))
+                                    is Boolean -> LoginDataModel.LoginResult.LoginAttemptResult.Success
+                                    is VerificationData -> LoginDataModel.LoginResult.LoginAttemptResult.CodeSent(action.phoneNumber, it)
+                                    else -> LoginDataModel.LoginResult.LoginAttemptResult.Failure(Throwable("Unknown Error"))
                                 }
                             }
-                            .onErrorReturn { t -> LoginDataHolder.LoginResult.LoginAttemptResult.Failure(t) }
+                            .onErrorReturn { t -> LoginDataModel.LoginResult.LoginAttemptResult.Failure(t) }
                             .observeOn(AndroidSchedulers.mainThread())
-                            .startWith(LoginDataHolder.LoginResult.LoginAttemptResult.InFlight)
+                            .startWith(LoginDataModel.LoginResult.LoginAttemptResult.InFlight)
                 }
             }
 
     private val processCodeVerification =
-            ObservableTransformer<LoginDataHolder.LoginAction.VerifyCodeAction, LoginDataHolder.LoginResult.VerifyCodeResult>  { actions ->
+            ObservableTransformer<LoginDataModel.LoginAction.VerifyCodeAction, LoginDataModel.LoginResult.VerifyCodeResult>  { actions ->
                 actions.flatMap { action ->
                     rxFirebaseAuth.signInWithCode(action.verificationId, action.code)
                             .map {
-                                if(it) LoginDataHolder.LoginResult.VerifyCodeResult.Success
-                                else LoginDataHolder.LoginResult.VerifyCodeResult.Failure(Throwable("Unknown Error"))
+                                if(it) LoginDataModel.LoginResult.VerifyCodeResult.Success
+                                else LoginDataModel.LoginResult.VerifyCodeResult.Failure(Throwable("Unknown Error"))
                             }
-                            .onErrorReturn { t -> LoginDataHolder.LoginResult.VerifyCodeResult.Failure(t) }
+                            .onErrorReturn { t -> LoginDataModel.LoginResult.VerifyCodeResult.Failure(t) }
                             .observeOn(AndroidSchedulers.mainThread())
-                            .startWith(LoginDataHolder.LoginResult.VerifyCodeResult.InFlight)
+                            .startWith(LoginDataModel.LoginResult.VerifyCodeResult.InFlight)
                 }
             }
 
-    private val processCodeValidation = ObservableTransformer<LoginDataHolder.LoginAction.ValidateCodeAction, LoginDataHolder.LoginResult.ValidateCodeResult> { actions ->
+    private val processCodeValidation = ObservableTransformer<LoginDataModel.LoginAction.ValidateCodeAction, LoginDataModel.LoginResult.ValidateCodeResult> { actions ->
         actions.flatMap { action ->
             Observable.just(action.code.toString().length == 6)
-                    .map { if(it) LoginDataHolder.LoginResult.ValidateCodeResult.Valid else LoginDataHolder.LoginResult.ValidateCodeResult.Invalid}
+                    .map { if(it) LoginDataModel.LoginResult.ValidateCodeResult.Valid else LoginDataModel.LoginResult.ValidateCodeResult.Invalid}
                     .observeOn(AndroidSchedulers.mainThread())
         }
     }
 
-    private val processPhoneNumberValidation = ObservableTransformer<LoginDataHolder.LoginAction.ValidatePhoneNumberAction, LoginDataHolder.LoginResult.ValidatePhoneNumberResult> { actions ->
+    private val processPhoneNumberValidation = ObservableTransformer<LoginDataModel.LoginAction.ValidatePhoneNumberAction, LoginDataModel.LoginResult.ValidatePhoneNumberResult> { actions ->
         actions.flatMap { action ->
             Observable.just(Utils.isValidMobile(action.phoneNumber.toString()))
-                    .map { if (it) LoginDataHolder.LoginResult.ValidatePhoneNumberResult.Valid else LoginDataHolder.LoginResult.ValidatePhoneNumberResult.Invalid }
+                    .map { if (it) LoginDataModel.LoginResult.ValidatePhoneNumberResult.Valid else LoginDataModel.LoginResult.ValidatePhoneNumberResult.Invalid }
                     .observeOn(AndroidSchedulers.mainThread())
         }
     }
 
     fun actionProcessor() =
-            ObservableTransformer<LoginDataHolder.LoginAction, LoginDataHolder.LoginResult> { actions ->
+            ObservableTransformer<LoginDataModel.LoginAction, LoginDataModel.LoginResult> { actions ->
                 actions.publish({ shared ->
-                    Observable.merge<LoginDataHolder.LoginResult>(
-                            shared.ofType(LoginDataHolder.LoginAction.LoginAttemptAction::class.java).compose(processLoginAttempt),
-                            shared.ofType(LoginDataHolder.LoginAction.VerifyCodeAction::class.java).compose(processCodeVerification),
-                            shared.ofType(LoginDataHolder.LoginAction.ValidatePhoneNumberAction::class.java).compose(processPhoneNumberValidation),
-                            shared.ofType(LoginDataHolder.LoginAction.ValidateCodeAction::class.java).compose(processCodeValidation)
+                    Observable.merge<LoginDataModel.LoginResult>(
+                            shared.ofType(LoginDataModel.LoginAction.LoginAttemptAction::class.java).compose(processLoginAttempt),
+                            shared.ofType(LoginDataModel.LoginAction.VerifyCodeAction::class.java).compose(processCodeVerification),
+                            shared.ofType(LoginDataModel.LoginAction.ValidatePhoneNumberAction::class.java).compose(processPhoneNumberValidation),
+                            shared.ofType(LoginDataModel.LoginAction.ValidateCodeAction::class.java).compose(processCodeValidation)
                     )
                 })
             }
