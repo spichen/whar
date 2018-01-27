@@ -9,6 +9,7 @@ import io.reactivex.Observable
 interface RiveRxView<E : RiveRxEvent, in VS : RiveRxViewState> {
 
     val riveRx : RiveRxDelegate
+    fun localEvents(): Observable<E>
     fun events(): Observable<E>
     fun render(state: VS)
 

@@ -14,24 +14,32 @@ abstract class RiveRxViewModel<E : RiveRxEvent, out A : RiveRxAction, R : RiveRx
 
     abstract var idleState : VS
 
-    private val intentsSubject: PublishSubject<E> = PublishSubject.create()
+    private val eventsSubject: PublishSubject<E> = PublishSubject.create()
+    private val localEventsSubject: PublishSubject<E> = PublishSubject.create()
     private val statesObservable: Observable<VS> = compose()
 
-    fun processEvents(events: Observable<E>) {
-        events.subscribe(intentsSubject)
+    fun processEvents(events: Observable<E>, localEvents : Observable<E>) {
+        events.subscribe(eventsSubject)
+        localEvents.subscribe(localEventsSubject)
     }
 
     fun states(): Observable<VS> = statesObservable
 
     private fun compose(): Observable<VS> {
-        return intentsSubject
-                .compose<E>(intentFilter())
-                .map(this::eventToAction)
-                .compose(processor.process())
+        return Observable.merge(
+                eventsSubject
+                    .compose<E>(intentFilter())
+                    .map(this::eventToAction)
+                    .compose(processor.process()),
+                localEventsSubject
+                    .map(this::eventToResult)
+                )
                 .scan(idleState, resultToViewState())
                 .replay(1)
                 .autoConnect(0)
     }
+
+    abstract fun eventToResult(event: E) : R
 
     abstract fun intentFilter(): ObservableTransformer<E, E>
 

@@ -22,9 +22,7 @@ class LoginProcessor @Inject constructor(): RiveRxProcessor<LoginAction,LoginRes
     override val processors: HashMap<Class<out LoginAction>, ObservableTransformer<out LoginAction, out LoginResult>>
         get() = hashMapOf(
                 Pair(LoginAction.LoginAttemptAction::class.java,processLoginAttempt()),
-                Pair(LoginAction.VerifyCodeAction::class.java,processCodeVerification()),
-                Pair(LoginAction.ValidateCodeAction::class.java,processCodeValidation()),
-                Pair(LoginAction.ValidatePhoneNumberAction::class.java,processPhoneNumberValidation())
+                Pair(LoginAction.VerifyCodeAction::class.java,processCodeVerification())
         )
 
     private fun processLoginAttempt() =
@@ -56,7 +54,7 @@ class LoginProcessor @Inject constructor(): RiveRxProcessor<LoginAction,LoginRes
     private fun processCodeVerification() =
             ObservableTransformer<LoginAction.VerifyCodeAction, LoginResult.VerifyCodeResult>  { actions ->
                 actions.flatMap { action ->
-                    rxFirebaseAuth.signInWithCode(action.verificationId, action.code)
+                    rxFirebaseAuth.signInWithCode(action.verificationId, action.code!!)
                             .map {
                                 if(it) LoginResult.VerifyCodeResult.Success
                                 else LoginResult.VerifyCodeResult.Failure(Throwable("Unknown Error"))
@@ -67,20 +65,4 @@ class LoginProcessor @Inject constructor(): RiveRxProcessor<LoginAction,LoginRes
                 }
             }
 
-    private fun processCodeValidation() =
-            ObservableTransformer<LoginAction.ValidateCodeAction, LoginResult.ValidateCodeResult> { actions ->
-                actions.flatMap { action ->
-                    Observable.just(action.code.toString().length == 6)
-                            .map { if(it) LoginResult.ValidateCodeResult.Valid else LoginResult.ValidateCodeResult.Invalid}
-                            .observeOn(AndroidSchedulers.mainThread())
-                }
-            }
-
-    private fun processPhoneNumberValidation() = ObservableTransformer<LoginAction.ValidatePhoneNumberAction, LoginResult.ValidatePhoneNumberResult> { actions ->
-        actions.flatMap { action ->
-            Observable.just(Utils.isValidMobile(action.phoneNumber.toString()))
-                    .map { if (it) LoginResult.ValidatePhoneNumberResult.Valid else LoginResult.ValidatePhoneNumberResult.Invalid }
-                    .observeOn(AndroidSchedulers.mainThread())
-        }
-    }
 }

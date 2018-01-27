@@ -3,9 +3,9 @@ package com.zigzag.riverx;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
-import android.content.Context;
 
 import java.util.HashMap;
+
 /**
  * Created by salah on 24/1/18.
  */
@@ -15,32 +15,29 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @SuppressLint("StaticFieldLeak")
     private static ViewModelFactory INSTANCE;
 
-    private final Context applicationContext;
-
-    public ViewModelFactory(Context applicationContext) {
-        this.applicationContext = applicationContext;
+    public ViewModelFactory() {
     }
 
-    public static ViewModelFactory getInstance(Context context) {
+    public static ViewModelFactory getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new ViewModelFactory(context.getApplicationContext());
+            INSTANCE = new ViewModelFactory();
         }
         return INSTANCE;
     }
 
-    HashMap<Class<? extends RiveRxViewModel>, RiveRxViewModel> viewModelHashMap = new HashMap<>();
+    private HashMap<Class<? extends ViewModel>, ViewModel> viewModelHashMap = new HashMap<>();
 
-    public void registerViewModel(Class<? extends RiveRxViewModel> modelClass, RiveRxViewModel viewModel){
-        if(!viewModelHashMap.containsKey(modelClass)){
-            viewModelHashMap.put(modelClass,viewModel);
+    public void registerViewModel(ViewModel viewModel){
+        if(!viewModelHashMap.containsKey(viewModel.getClass())){
+            viewModelHashMap.put(viewModel.getClass(),viewModel);
         }
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
-        for (HashMap.Entry<Class<? extends RiveRxViewModel>, RiveRxViewModel> entry : viewModelHashMap.entrySet()) {
-            Class<? extends RiveRxViewModel> key = entry.getKey();
+        for (HashMap.Entry<Class<? extends ViewModel>, ViewModel> entry : viewModelHashMap.entrySet()) {
+            Class<? extends ViewModel> key = entry.getKey();
             if (modelClass.isAssignableFrom(key)) {
                 return (T) entry.getValue();
             }

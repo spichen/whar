@@ -14,17 +14,16 @@ class LoginDataModel {
     sealed class LoginAction : RiveRxAction {
         object IdleAction : LoginAction()
         data class LoginAttemptAction(val phoneNumber: Number) : LoginAction()
-        data class VerifyCodeAction(val code: Number, val verificationId : String?) : LoginAction()
-        data class ValidatePhoneNumberAction(val phoneNumber: Number) : LoginAction()
-        data class ValidateCodeAction(val code: Number) :  LoginAction()
+        data class VerifyCodeAction(val code: Number?, val verificationId : String?) : LoginAction()
     }
 
     sealed class LoginEvent : RiveRxEvent {
         object InitialEvent : LoginEvent()
         data class AttemptLoginEvent(var number: Number) : LoginEvent()
-        data class VerifyCodeEvent(var code: Number) : LoginEvent()
+        data class VerifyCodeEvent(var code: Number?) : LoginEvent()
         data class ValidatePhoneNumberEvent(var number: Number) : LoginEvent()
-        data class ValidateCodeEvent(var code: Number) : LoginEvent()
+        data class ValidateCodeEvent(var code: Number?) : LoginEvent()
+        object EditNumberEvent : LoginEvent()
     }
 
     sealed class LoginResult : RiveRxResult {
@@ -46,17 +45,21 @@ class LoginDataModel {
             object Invalid : ValidatePhoneNumberResult()
         }
 
-        sealed class ValidateCodeResult : LoginResult() {
-            object Valid : ValidateCodeResult()
+        sealed class ValidateCodeResult: LoginResult() {
+            object Valid: ValidateCodeResult()
             object Invalid : ValidateCodeResult()
         }
+
+        object EditNumber : LoginResult()
     }
 
     data class LoginViewState(
             var invalid : Boolean,
             var inProgress : Boolean,
             var success : Boolean,
+            var inputNumber : Boolean = true,
             var codeSent :  Boolean = false,
+            var code : Number? = null,
             var errorMessage : String? = null,
             var lastPhoneNumber : Number? = null
     ) : RiveRxViewState {
@@ -66,7 +69,9 @@ class LoginDataModel {
                         invalid = false,
                         inProgress = false,
                         success = false,
+                        inputNumber = true,
                         codeSent = false,
+                        code = null,
                         errorMessage = null)
             }
         }

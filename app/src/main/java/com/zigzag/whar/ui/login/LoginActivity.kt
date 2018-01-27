@@ -1,5 +1,6 @@
 package com.zigzag.whar.ui.login
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.CallSuper
@@ -14,7 +15,6 @@ import com.jakewharton.rxbinding2.widget.editorActions
 import io.reactivex.Observable
 import android.view.ViewGroup
 import android.support.v4.view.PagerAdapter
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -22,17 +22,17 @@ import com.zigzag.whar.common.helpers.ViewHelpers.whiteLongSnackBar
 import kotlinx.android.synthetic.main.page_phone_number.view.*
 import kotlinx.android.synthetic.main.page_code.view.*
 import android.view.inputmethod.InputMethodManager
-import com.jakewharton.rxbinding2.support.v4.view.pageSelections
 import com.zigzag.riverx.RiveRxView
 import java.util.*
 import com.zigzag.riverx.RiveRxDelegate
 import com.zigzag.riverx.RiveRxDelegateImpl
 import com.zigzag.whar.ui.login.LoginDataModel.*
-import dagger.android.AndroidInjection
+import dagger.android.support.DaggerAppCompatActivity
+import io.reactivex.observables.ConnectableObservable
 import javax.inject.Inject
 
 class LoginActivity :
-        AppCompatActivity(),
+        DaggerAppCompatActivity(),
         RiveRxView<LoginEvent, LoginViewState>{
 
     @Inject
@@ -49,13 +49,12 @@ class LoginActivity :
     var phoneNumberPage : View? = null
     var codePage : View? = null
 
+    private lateinit var submitButtonObservable : ConnectableObservable<Unit>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AndroidInjection.inject(this)
         setContentView(R.layout.activity_login)
-
         initViews()
-        initObservation()
     }
 
     @CallSuper
@@ -70,32 +69,48 @@ class LoginActivity :
         enableSubmitButton(!state.invalid)
         if(!state.inProgress){
             when {
+                state.inputNumber -> displayPhoneNumberInputPage()
                 state.codeSent -> {
                     codePage?.tv_phone_number?.text = getString(R.string.tap_to_edit, state.lastPhoneNumber)
-                    codePage?.et_code_1?.requestFocus()
-                    tv_resend.visibility = VISIBLE
-                    showKeyboard(codePage?.et_code_1 as View)
+                    when(if(state.code == null) 0 else state.code.toString().length){
+                        0 -> codePage?.et_code_1?.requestFocus()
+                        1 -> codePage?.et_code_2?.requestFocus()
+                        2 -> codePage?.et_code_3?.requestFocus()
+                        3 -> codePage?.et_code_4?.requestFocus()
+                        4 -> codePage?.et_code_5?.requestFocus()
+                        5 -> codePage?.et_code_6?.requestFocus()
+                    }
+
                     displayCodeInputPage()
                 }
                 state.success -> completeSubmitButtonAnimation()
-                else -> {
-                    showError(state.errorMessage)
-                }
             }
+            if(state.errorMessage!=null) showError(state.errorMessage)
         }
     }
 
     override fun events(): Observable<LoginEvent> {
         return Observable.merge(
-                attemptLoginIntent(),
-                verifyCodeIntent(),
-                validateCodeIntent(),
-                validatePhoneNumberIntent()
+                Arrays.asList(
+                        attemptLoginEvent(),
+                        verifyCodeEvent()
+                )
         )
     }
 
+    override fun localEvents(): Observable<LoginEvent> {
+        return Observable.merge(
+                Arrays.asList(
+                        editPhoneNumberEvent(),
+                        validateCodeEvent(),
+                        validatePhoneNumberEvent()
+                )
+        )
+    }
 
     private fun initViews() {
+        submitButtonObservable = btn_submit.clicks().publish()
+
         phoneNumberPage = View.inflate(this,R.layout.page_phone_number,null)
         codePage = View.inflate(this,R.layout.page_code,null)
 
@@ -106,23 +121,24 @@ class LoginActivity :
 
         phoneNumberPage?.s_country_code?.adapter = spinnerArrayAdapter
         phoneNumberPage?.s_country_code?.setSelection(getDefaultCountryPosition())
+
+        submitButtonObservable.connect()
     }
 
-
-    private fun verifyCodeIntent() =
+    private fun verifyCodeEvent() =
             Observable.merge(
                     codePage?.et_code_6?.editorActions()?.filter { validateCode() },
-                    btn_submit.clicks().filter { vp_container.currentItem == PAGE_CODE }
+                    submitButtonObservable.filter { vp_container.currentItem == PAGE_CODE }
             ).map { LoginEvent.VerifyCodeEvent(getUserInputtedCode()) }
 
-    private fun attemptLoginIntent() =
+    private fun attemptLoginEvent() =
             Observable.merge(
                     phoneNumberPage?.et_number?.editorActions()?.filter { validateNumber() },
-                    btn_submit.clicks().filter { vp_container.currentItem == PAGE_PHONE_NUMBER }
+                    submitButtonObservable.filter { vp_container.currentItem == PAGE_PHONE_NUMBER }
             ).map { LoginEvent.AttemptLoginEvent(getUserInputtedNumber()) }
 
 
-    private fun validateCodeIntent() =
+    private fun validateCodeEvent() =
             Observable.merge(
                 Arrays.asList(
                     codePage?.et_code_1?.textChanges(),
@@ -136,33 +152,18 @@ class LoginActivity :
                     LoginEvent.ValidateCodeEvent(getUserInputtedCode())
                 }
 
-    private fun validatePhoneNumberIntent() = phoneNumberPage?.et_number?.textChanges()
+
+    private fun validatePhoneNumberEvent() = phoneNumberPage?.et_number?.textChanges()
                 ?.map {
                     if(it.isEmpty()) LoginEvent.ValidatePhoneNumberEvent(0)
                     else LoginEvent.ValidatePhoneNumberEvent(it.toString().toLong())
                 }
-    
-    private fun initObservation() {
 
-        vp_container.pageSelections()
-                .subscribe{ page ->
-                    revertSubmitButton()
-                    validateSubmitButton()
-                    updateUI(page)
-                }
+    private fun editPhoneNumberEvent() = codePage?.tv_phone_number?.clicks()
+            ?.map{
+                LoginEvent.EditNumberEvent
+            }
 
-        codePage?.tv_phone_number?.clicks()
-                ?.subscribe{
-                    displayPhoneNumberInputPage()
-                }
-/*
-        tv_resend?.clicks()
-                ?.doOnNext { hideKeyboard() }
-                ?.map { presenter.resendCode(phoneNumber.toString().toLong()) }
-                ?.subscribe{
-                    showSuccess(R.string.code_resent)
-                }?.track()*/
-    }
 
     private fun animateSubmitButton(animate : Boolean){
         if(animate){
@@ -197,10 +198,6 @@ class LoginActivity :
         btn_submit.setText(if(vp_container.currentItem == PAGE_PHONE_NUMBER) R.string.get_code else R.string.verify )
     }
 
-    private fun validateSubmitButton(){
-        enableSubmitButton(if(vp_container.currentItem == PAGE_PHONE_NUMBER) validateNumber() else validateCode() )
-    }
-
     private fun completeSubmitButtonAnimation() {
         // @TODO add success animation
     }
@@ -214,20 +211,16 @@ class LoginActivity :
         return getUserInputtedCode().toString().length == 6
     }
 
-    private fun updateUI(page :Int) {
-        if (page == PAGE_CODE){
-            //codePage?.tv_phone_number?.text = getString(R.string.tap_to_edit, phoneNumber)
-        } else {
-            tv_resend.visibility = GONE
-        }
-    }
 
     private fun displayCodeInputPage() {
         vp_container.currentItem = PAGE_CODE
+        tv_resend.visibility = VISIBLE
     }
 
     private fun displayPhoneNumberInputPage() {
         vp_container.currentItem = PAGE_PHONE_NUMBER
+        updateSubmitButton()
+        tv_resend.visibility = GONE
     }
 
     private fun getDefaultCountryPosition() : Int {
@@ -243,7 +236,7 @@ class LoginActivity :
         return 0
     }
 
-    private fun getUserInputtedCode() : Number {
+    private fun getUserInputtedCode() : Number? {
         val code = codePage?.et_code_1?.text.toString() +
                 codePage?.et_code_2?.text.toString() +
                 codePage?.et_code_3?.text.toString() +
@@ -251,7 +244,7 @@ class LoginActivity :
                 codePage?.et_code_5?.text.toString() +
                 codePage?.et_code_6?.text.toString()
         return if(code.isEmpty()){
-            0
+            null
         }else{
             code.toLong()
         }

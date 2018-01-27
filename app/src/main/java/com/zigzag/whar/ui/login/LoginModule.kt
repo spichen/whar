@@ -1,9 +1,9 @@
 package com.zigzag.whar.ui.login
 
 import android.arch.lifecycle.ViewModel
-import com.zigzag.whar.di.ActivityScoped
 import dagger.Binds
 import dagger.Module
+import javax.inject.Singleton
 
 /**
  * Created by salah on 20/12/17.
@@ -12,8 +12,8 @@ import dagger.Module
 @Module
 abstract class LoginModule {
 
-    @ActivityScoped
     @Binds
+    @Singleton
     abstract fun provideLoginViewModel(viewModel: LoginViewModel): ViewModel
 
 }
