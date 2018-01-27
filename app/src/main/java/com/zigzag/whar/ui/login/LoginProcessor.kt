@@ -59,7 +59,7 @@ class LoginProcessor @Inject constructor(): RiveRxProcessor<LoginAction,LoginRes
                     rxFirebaseAuth.signInWithCode(action.verificationId, action.code)
                             .map {
                                 if(it) LoginResult.VerifyCodeResult.Success
-                                else LoginResult.VerifyCodeResult.Failure(Throwable("Unknown Erxror"))
+                                else LoginResult.VerifyCodeResult.Failure(Throwable("Unknown Error"))
                             }
                             .onErrorReturn { t -> LoginResult.VerifyCodeResult.Failure(t) }
                             .observeOn(AndroidSchedulers.mainThread())

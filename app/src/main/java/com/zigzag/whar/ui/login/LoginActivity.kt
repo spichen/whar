@@ -33,12 +33,13 @@ import javax.inject.Inject
 
 class LoginActivity :
         AppCompatActivity(),
-        RiveRxView<LoginEvent,LoginAction,LoginProcessor,LoginResult,LoginViewState,LoginViewModel>{
+        RiveRxView<LoginEvent, LoginViewState>{
 
     @Inject
-    override lateinit var viewModel: LoginViewModel
+    lateinit var viewModel : LoginViewModel
 
-    override val riverx : RiveRxDelegate = RiveRxDelegateImpl(this)
+    override val riveRx: RiveRxDelegate
+        get() =  RiveRxDelegateImpl(this, viewModel)
 
     companion object {
         const val PAGE_PHONE_NUMBER = 0
@@ -60,7 +61,7 @@ class LoginActivity :
     @CallSuper
     override fun onStart() {
         super.onStart()
-        riverx.onStart()
+        riveRx.onStart()
     }
 
     override fun render(state: LoginViewState) {
@@ -83,7 +84,8 @@ class LoginActivity :
             }
         }
     }
-    override fun intents(): Observable<LoginEvent> {
+
+    override fun events(): Observable<LoginEvent> {
         return Observable.merge(
                 attemptLoginIntent(),
                 verifyCodeIntent(),
@@ -91,12 +93,7 @@ class LoginActivity :
                 validatePhoneNumberIntent()
         )
     }
-/*
 
-    override fun render(state: LoginViewState) {
-
-    }
-*/
 
     private fun initViews() {
         phoneNumberPage = View.inflate(this,R.layout.page_phone_number,null)

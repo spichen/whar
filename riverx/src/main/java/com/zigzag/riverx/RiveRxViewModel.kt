@@ -10,7 +10,7 @@ import io.reactivex.subjects.PublishSubject
  * Created by salah on 23/1/18.
  */
 
-abstract class RiveRxViewModel<E : RiveRxEvent, A : RiveRxAction, out P : RiveRxProcessor<A,R>, R : RiveRxResult,  VS : RiveRxViewState>(val processor : P) : ViewModel() {
+abstract class RiveRxViewModel<E : RiveRxEvent, out A : RiveRxAction, R : RiveRxResult,  VS : RiveRxViewState>(private val processor : RiveRxProcessor<A,R>) : ViewModel() {
 
     abstract var idleState : VS
 

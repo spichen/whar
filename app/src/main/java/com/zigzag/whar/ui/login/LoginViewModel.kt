@@ -13,7 +13,7 @@ import javax.inject.Inject
  * Created by salah on 23/1/18.
  */
 
-class LoginViewModel @Inject constructor(loginProcessor : LoginProcessor) : RiveRxViewModel<LoginEvent, LoginAction,LoginProcessor, LoginResult, LoginViewState>(loginProcessor) {
+class LoginViewModel @Inject constructor(loginProcessor : LoginProcessor) : RiveRxViewModel<LoginEvent, LoginAction, LoginResult, LoginViewState>(loginProcessor) {
 
     private var verificationData : VerificationData? = null
 
