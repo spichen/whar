@@ -16,7 +16,6 @@ import dagger.android.support.AndroidSupportInjectionModule
 @Component(modules = arrayOf(
         ApplicationModule::class,
         FirebaseModule::class,
-        ViewModelModule::class,
         AndroidSupportInjectionModule::class,
         ActivityBindingModule::class
 ))

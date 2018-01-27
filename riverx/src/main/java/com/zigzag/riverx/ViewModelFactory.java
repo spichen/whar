@@ -1,4 +1,4 @@
-package com.zigzag.arch;
+package com.zigzag.riverx;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModel;
@@ -28,9 +28,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         return INSTANCE;
     }
 
-    HashMap<Class<? extends BaseViewModel>, BaseViewModel> viewModelHashMap = new HashMap<>();
+    HashMap<Class<? extends RiveRxViewModel>, RiveRxViewModel> viewModelHashMap = new HashMap<>();
 
-    public void registerViewModel(Class<? extends BaseViewModel> modelClass, BaseViewModel viewModel){
+    public void registerViewModel(Class<? extends RiveRxViewModel> modelClass, RiveRxViewModel viewModel){
         if(!viewModelHashMap.containsKey(modelClass)){
             viewModelHashMap.put(modelClass,viewModel);
         }
@@ -39,8 +39,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @SuppressWarnings("unchecked")
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
-        for (HashMap.Entry<Class<? extends BaseViewModel>, BaseViewModel> entry : viewModelHashMap.entrySet()) {
-            Class<? extends BaseViewModel> key = entry.getKey();
+        for (HashMap.Entry<Class<? extends RiveRxViewModel>, RiveRxViewModel> entry : viewModelHashMap.entrySet()) {
+            Class<? extends RiveRxViewModel> key = entry.getKey();
             if (modelClass.isAssignableFrom(key)) {
                 return (T) entry.getValue();
             }

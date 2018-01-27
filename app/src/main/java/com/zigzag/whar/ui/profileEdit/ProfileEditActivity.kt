@@ -17,7 +17,7 @@ import com.jakewharton.rxbinding2.widget.editorActions
 import com.squareup.picasso.Picasso
 import com.zigzag.whar.ui.dashboard.DashboardActivity
 
-class ProfileEditActivity : AppCompatActivity() /*BaseActivity<ProfileEditContract.View, ProfileEditContract.Presenter>(), ProfileEditContract.View*/{
+class ProfileEditActivity : AppCompatActivity() /*RiveRxActivity<ProfileEditContract.View, ProfileEditContract.Presenter>(), ProfileEditContract.View*/{
 /*
     @Inject lateinit var profileEditActivityPresenter : ProfileEditPresenter
 

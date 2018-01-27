@@ -1,6 +1,5 @@
 package com.zigzag.whar.ui.login
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.CallSuper
@@ -15,6 +14,7 @@ import com.jakewharton.rxbinding2.widget.editorActions
 import io.reactivex.Observable
 import android.view.ViewGroup
 import android.support.v4.view.PagerAdapter
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -23,17 +23,22 @@ import kotlinx.android.synthetic.main.page_phone_number.view.*
 import kotlinx.android.synthetic.main.page_code.view.*
 import android.view.inputmethod.InputMethodManager
 import com.jakewharton.rxbinding2.support.v4.view.pageSelections
+import com.zigzag.riverx.RiveRxView
 import java.util.*
-import com.zigzag.arch.BaseActivity
+import com.zigzag.riverx.RiveRxDelegate
+import com.zigzag.riverx.RiveRxDelegateImpl
 import com.zigzag.whar.ui.login.LoginDataModel.*
 import dagger.android.AndroidInjection
-import dagger.android.AndroidInjector
-import dagger.android.HasActivityInjector
 import javax.inject.Inject
 
-class LoginActivity : BaseActivity<LoginEvent,LoginViewState,LoginViewModel>() {
+class LoginActivity :
+        AppCompatActivity(),
+        RiveRxView<LoginEvent,LoginAction,LoginProcessor,LoginResult,LoginViewState,LoginViewModel>{
+
     @Inject
-    lateinit var loginViewModel : LoginViewModel
+    override lateinit var viewModel: LoginViewModel
+
+    override val riverx : RiveRxDelegate = RiveRxDelegateImpl(this)
 
     companion object {
         const val PAGE_PHONE_NUMBER = 0
@@ -47,7 +52,6 @@ class LoginActivity : BaseActivity<LoginEvent,LoginViewState,LoginViewModel>() {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_login)
-        provideViewModel<LoginViewModel>(loginViewModel)
 
         initViews()
         initObservation()
@@ -56,15 +60,7 @@ class LoginActivity : BaseActivity<LoginEvent,LoginViewState,LoginViewModel>() {
     @CallSuper
     override fun onStart() {
         super.onStart()
-    }
-
-    override fun intents(): Observable<LoginEvent> {
-        return Observable.merge(
-                attemptLoginIntent(),
-                verifyCodeIntent(),
-                validateCodeIntent(),
-                validatePhoneNumberIntent()
-        )
+        riverx.onStart()
     }
 
     override fun render(state: LoginViewState) {
@@ -87,6 +83,20 @@ class LoginActivity : BaseActivity<LoginEvent,LoginViewState,LoginViewModel>() {
             }
         }
     }
+    override fun intents(): Observable<LoginEvent> {
+        return Observable.merge(
+                attemptLoginIntent(),
+                verifyCodeIntent(),
+                validateCodeIntent(),
+                validatePhoneNumberIntent()
+        )
+    }
+/*
+
+    override fun render(state: LoginViewState) {
+
+    }
+*/
 
     private fun initViews() {
         phoneNumberPage = View.inflate(this,R.layout.page_phone_number,null)
@@ -115,7 +125,8 @@ class LoginActivity : BaseActivity<LoginEvent,LoginViewState,LoginViewModel>() {
             ).map { LoginEvent.AttemptLoginEvent(getUserInputtedNumber()) }
 
 
-    private fun validateCodeIntent() = Observable.merge(
+    private fun validateCodeIntent() =
+            Observable.merge(
                 Arrays.asList(
                     codePage?.et_code_1?.textChanges(),
                     codePage?.et_code_2?.textChanges(),
