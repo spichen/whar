@@ -1,4 +1,4 @@
-package com.zigzag.riverx
+package com.salah.riverx
 
 import android.arch.lifecycle.ViewModel
 

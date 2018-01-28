@@ -2,6 +2,7 @@ package com.zigzag.whar.ui.login
 
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.CallSuper
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -22,17 +23,20 @@ import com.zigzag.whar.common.helpers.ViewHelpers.whiteLongSnackBar
 import kotlinx.android.synthetic.main.page_phone_number.view.*
 import kotlinx.android.synthetic.main.page_code.view.*
 import android.view.inputmethod.InputMethodManager
-import com.zigzag.riverx.RiveRxView
+import com.salah.riverx.RiveRxView
 import java.util.*
-import com.zigzag.riverx.RiveRxDelegate
-import com.zigzag.riverx.RiveRxDelegateImpl
+import com.salah.riverx.RiveRxDelegate
+import com.salah.riverx.RiveRxDelegateImpl
+import com.zigzag.whar.base.BaseActivity
+import com.zigzag.whar.ui.dashboard.DashboardActivity
 import com.zigzag.whar.ui.login.LoginDataModel.*
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.observables.ConnectableObservable
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class LoginActivity :
-        DaggerAppCompatActivity(),
+        BaseActivity(),
         RiveRxView<LoginEvent, LoginViewState>{
 
     @Inject
@@ -80,11 +84,12 @@ class LoginActivity :
                         4 -> codePage?.et_code_5?.requestFocus()
                         5 -> codePage?.et_code_6?.requestFocus()
                     }
-
+                    if(state.codeResent) showSuccess(R.string.code_resent)
                     displayCodeInputPage()
                 }
                 state.success -> completeSubmitButtonAnimation()
             }
+
             if(state.errorMessage!=null) showError(state.errorMessage)
         }
     }
@@ -93,7 +98,8 @@ class LoginActivity :
         return Observable.merge(
                 Arrays.asList(
                         attemptLoginEvent(),
-                        verifyCodeEvent()
+                        verifyCodeEvent(),
+                        resendCodeEvent()
                 )
         )
     }
@@ -162,6 +168,12 @@ class LoginActivity :
     private fun editPhoneNumberEvent() = codePage?.tv_phone_number?.clicks()
             ?.map{
                 LoginEvent.EditNumberEvent
+            }
+
+    private fun resendCodeEvent() = tv_resend?.clicks()
+            ?.throttleFirst(20000,TimeUnit.MILLISECONDS)
+            ?.map{
+                LoginEvent.ResendCodeEvent
             }
 
 
@@ -274,18 +286,9 @@ class LoginActivity :
         showSuccess(getString(message))
     }
 
-    private fun setSubmitButtonText(text: String) {
-        btn_submit.text = text
-    }
-
     private fun enableSubmitButton(enable: Boolean) {
         btn_submit.isEnabled = enable
         btn_submit.alpha = if(enable) 1f else 0.5f
-    }
-
-    private fun showKeyboard(view : View){
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 
     internal inner class PhoneAuthSliderAdapter : PagerAdapter() {

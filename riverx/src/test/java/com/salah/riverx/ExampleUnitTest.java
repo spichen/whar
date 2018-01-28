@@ -1,4 +1,4 @@
-package com.salah.arch;
+package com.salah.riverx;
 
 import org.junit.Test;
 

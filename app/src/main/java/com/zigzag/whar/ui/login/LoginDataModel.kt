@@ -1,9 +1,10 @@
 package com.zigzag.whar.ui.login
 
-import com.zigzag.riverx.RiveRxAction
-import com.zigzag.riverx.RiveRxEvent
-import com.zigzag.riverx.RiveRxResult
-import com.zigzag.riverx.RiveRxViewState
+import com.google.firebase.auth.PhoneAuthProvider
+import com.salah.riverx.RiveRxAction
+import com.salah.riverx.RiveRxEvent
+import com.salah.riverx.RiveRxResult
+import com.salah.riverx.RiveRxViewState
 import com.zigzag.whar.rx.firebase.VerificationData
 
 /**
@@ -15,6 +16,7 @@ class LoginDataModel {
         object IdleAction : LoginAction()
         data class LoginAttemptAction(val phoneNumber: Number) : LoginAction()
         data class VerifyCodeAction(val code: Number?, val verificationId : String?) : LoginAction()
+        data class ResendCode(val phoneNumber : Number, val token: PhoneAuthProvider.ForceResendingToken) : LoginAction()
     }
 
     sealed class LoginEvent : RiveRxEvent {
@@ -24,6 +26,7 @@ class LoginDataModel {
         data class ValidatePhoneNumberEvent(var number: Number) : LoginEvent()
         data class ValidateCodeEvent(var code: Number?) : LoginEvent()
         object EditNumberEvent : LoginEvent()
+        object ResendCodeEvent : LoginEvent()
     }
 
     sealed class LoginResult : RiveRxResult {
@@ -51,6 +54,7 @@ class LoginDataModel {
         }
 
         object EditNumber : LoginResult()
+        object CodeResent : LoginResult()
     }
 
     data class LoginViewState(
@@ -59,6 +63,7 @@ class LoginDataModel {
             var success : Boolean,
             var inputNumber : Boolean = true,
             var codeSent :  Boolean = false,
+            var codeResent :  Boolean = false,
             var code : Number? = null,
             var errorMessage : String? = null,
             var lastPhoneNumber : Number? = null
@@ -71,6 +76,7 @@ class LoginDataModel {
                         success = false,
                         inputNumber = true,
                         codeSent = false,
+                        codeResent = false,
                         code = null,
                         errorMessage = null)
             }

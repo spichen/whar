@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zigzag.whar">
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".App"
@@ -14,25 +15,21 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.login.LoginActivity"
-            android:windowSoftInputMode="adjustNothing">
-
+            android:windowSoftInputMode="adjustNothing"
+            android:noHistory="true">
+        </activity>
+        <activity android:name=".ui.profileEdit.ProfileEditActivity" />
+        <activity
+            android:name=".ui.dashboard.DashboardActivity"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
-        <activity
-            android:name=".ui.profileEdit.ProfileEditActivity"/>
-
-        <activity
-            android:name=".ui.dashboard.DashboardActivity"
-            android:windowSoftInputMode="adjustResize"
-            >
-        </activity>
-
+        <activity android:name=".base.BaseActivity" />
     </application>
 
 </manifest>

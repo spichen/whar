@@ -1,4 +1,4 @@
-package com.zigzag.riverx;
+package com.salah.riverx;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModel;

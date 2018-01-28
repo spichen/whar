@@ -11,8 +11,6 @@ import dagger.Module
 @Module
 abstract class FeedsModule {
 
-    @ActivityScoped
-    @Binds
-    internal abstract fun feedsPresenter(presenter: FeedsPresenter): FeedsContract.Presenter
+
 
 }

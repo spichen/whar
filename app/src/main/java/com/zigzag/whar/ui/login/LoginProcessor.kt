@@ -1,8 +1,7 @@
 package com.zigzag.whar.ui.login
 
 import com.google.firebase.auth.PhoneAuthCredential
-import com.zigzag.riverx.RiveRxProcessor
-import com.zigzag.whar.common.Utils
+import com.salah.riverx.RiveRxProcessor
 import com.zigzag.whar.rx.firebase.RxFirebaseAuth
 import com.zigzag.whar.rx.firebase.VerificationData
 import io.reactivex.Observable
@@ -10,6 +9,7 @@ import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 import com.zigzag.whar.ui.login.LoginDataModel.*
+
 /**
  * Created by salah on 26/1/18.
  */
@@ -22,7 +22,8 @@ class LoginProcessor @Inject constructor(): RiveRxProcessor<LoginAction,LoginRes
     override val processors: HashMap<Class<out LoginAction>, ObservableTransformer<out LoginAction, out LoginResult>>
         get() = hashMapOf(
                 Pair(LoginAction.LoginAttemptAction::class.java,processLoginAttempt()),
-                Pair(LoginAction.VerifyCodeAction::class.java,processCodeVerification())
+                Pair(LoginAction.VerifyCodeAction::class.java,processCodeVerification()),
+                Pair(LoginAction.ResendCode::class.java,processCodeResend())
         )
 
     private fun processLoginAttempt() =
@@ -62,6 +63,15 @@ class LoginProcessor @Inject constructor(): RiveRxProcessor<LoginAction,LoginRes
                             .onErrorReturn { t -> LoginResult.VerifyCodeResult.Failure(t) }
                             .observeOn(AndroidSchedulers.mainThread())
                             .startWith(LoginResult.VerifyCodeResult.InFlight)
+                }
+            }
+
+    private fun processCodeResend() =
+            ObservableTransformer<LoginAction.ResendCode, LoginResult.CodeResent>  { actions ->
+                actions.flatMap { action ->
+                    Observable.just(rxFirebaseAuth.resendCode(action.phoneNumber, action.token))
+                            .map { LoginResult.CodeResent }
+                            .observeOn(AndroidSchedulers.mainThread())
                 }
             }
 

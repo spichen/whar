@@ -10,31 +10,32 @@ import com.jakewharton.rxbinding2.view.clicks
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.zigzag.whar.R
 import com.zigzag.whar.di.ActivityScoped
-import com.zigzag.whar.ui.dashboard.DashboardPresenter
 import kotlinx.android.synthetic.main.fragment_permission.*
 import javax.inject.Inject
 
 @ActivityScoped
 class PermissionFragment @Inject constructor() : Fragment() {
 
-    @Inject
-    lateinit var dashboardPresenter: DashboardPresenter
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.fragment_permission, container, false)
     }
+/*
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+*/
+/*
         btn_request_permission.clicks()
                 .compose(RxPermissions(activity).ensure(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
                 .subscribe { granted ->
                     if(granted)
-                        dashboardPresenter.displayFeedsFragment()
-                }
+
+                }*//*
+
 
     }
+*/
 
 }

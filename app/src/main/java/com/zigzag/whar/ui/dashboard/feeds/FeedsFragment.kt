@@ -1,22 +1,8 @@
 package com.zigzag.whar.ui.dashboard.feeds
 
-import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.zigzag.whar.R
 import com.zigzag.whar.di.ActivityScoped
-import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 import javax.inject.Inject
-import com.google.firebase.firestore.FirebaseFirestore
-import com.zigzag.whar.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.DocumentSnapshot
-import com.zigzag.whar.common.firebase.ChangeEventType
-import com.zigzag.whar.model.Message
-import com.zigzag.whar.firestore.FirestoreRecyclerAdapter
-import com.zigzag.whar.viewholders.MessageViewHolder
-import android.support.v7.widget.LinearLayoutManager
 
 @ActivityScoped
 class FeedsFragment @Inject constructor() : Fragment()/* BaseFragment<FeedsContract.View, FeedsContract.Presenter>(), FeedsContract.View */{

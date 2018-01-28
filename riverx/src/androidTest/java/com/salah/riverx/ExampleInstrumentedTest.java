@@ -1,4 +1,4 @@
-package com.salah.arch;
+package com.salah.riverx;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

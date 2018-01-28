@@ -1,7 +1,5 @@
 package com.zigzag.whar.ui.dashboard
 
-import com.zigzag.whar.di.ActivityScoped
-import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import com.zigzag.whar.di.FragmentScoped
@@ -22,9 +20,5 @@ abstract class DashboardModule {
     @FragmentScoped
     @ContributesAndroidInjector
     internal abstract fun permissionFragment(): PermissionFragment
-
-    @ActivityScoped
-    @Binds
-    internal abstract fun dashboardPresenter(presenter: DashboardPresenter): DashboardContract.Presenter
 
 }

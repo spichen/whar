@@ -1,4 +1,4 @@
-package com.zigzag.riverx
+package com.salah.riverx
 
 import io.reactivex.Observable
 

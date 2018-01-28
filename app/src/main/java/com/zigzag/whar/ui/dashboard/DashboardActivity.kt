@@ -1,11 +1,9 @@
 package com.zigzag.whar.ui.dashboard
 
-import android.Manifest
-import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import com.zigzag.whar.base.BaseActivity
 
-class DashboardActivity : AppCompatActivity()/*:  RiveRxActivity<DashboardContract.View, DashboardContract.Presenter>(), DashboardContract.View*/ {
+class DashboardActivity : BaseActivity()/*:  RiveRxActivity<DashboardContract.View, DashboardContract.Presenter>(), DashboardContract.View*/ {
 /*
     @Inject
     lateinit var feedsFragment : FeedsFragment

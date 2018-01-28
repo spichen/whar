@@ -1,21 +1,6 @@
 package com.zigzag.whar.ui.profileEdit
 
-import android.os.Bundle
-import com.jakewharton.rxbinding2.view.clicks
-import com.jakewharton.rxbinding2.widget.textChanges
-import com.mlsdev.rximagepicker.RxImagePicker
-import com.mlsdev.rximagepicker.Sources
-import com.salah.rxdatetimepicker.RxDateConverters
-import com.salah.rxdatetimepicker.RxDateTimePicker
-import com.zigzag.whar.R
-import kotlinx.android.synthetic.main.activity_profile_edit.*
-import javax.inject.Inject
-import android.content.Intent
-import android.net.Uri
 import android.support.v7.app.AppCompatActivity
-import com.jakewharton.rxbinding2.widget.editorActions
-import com.squareup.picasso.Picasso
-import com.zigzag.whar.ui.dashboard.DashboardActivity
 
 class ProfileEditActivity : AppCompatActivity() /*RiveRxActivity<ProfileEditContract.View, ProfileEditContract.Presenter>(), ProfileEditContract.View*/{
 /*
