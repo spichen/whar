@@ -18,7 +18,8 @@ open class BaseActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         rxFirebaseAuth.observeAuthState()
-                .subscribe { firebaseAuth -> authRedirect(firebaseAuth.currentUser) }
+                .subscribe { //firebaseAuth -> authRedirect(firebaseAuth.currentUser)
+                     }
     }
 
     private fun authRedirect(user : FirebaseUser?){

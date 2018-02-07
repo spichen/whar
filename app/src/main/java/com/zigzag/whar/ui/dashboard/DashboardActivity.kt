@@ -1,65 +1,39 @@
 package com.zigzag.whar.ui.dashboard
 
-import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log
+import com.salah.rxfuel.RiveRx
+import com.salah.rxfuel.RiveRxView
+import com.zigzag.whar.R
 import com.zigzag.whar.base.BaseActivity
+import com.zigzag.whar.ui.dashboard.DashboardPresentationModels.*
+import io.reactivex.Observable
+import javax.inject.Inject
 
-class DashboardActivity : BaseActivity()/*:  RiveRxActivity<DashboardContract.View, DashboardContract.Presenter>(), DashboardContract.View*/ {
-/*
-    @Inject
-    lateinit var feedsFragment : FeedsFragment
-
-    @Inject
-    lateinit var permissionFragment : PermissionFragment
+class DashboardActivity : BaseActivity(), RiveRxView<DashboardEvent, DashboardViewState> {
 
     @Inject
-    lateinit var dashboardPresenter: DashboardPresenter
-
-    override fun getPresenterImpl(): DashboardContract.Presenter = dashboardPresenter
-
-    var fragment : Fragment? = null
+    lateinit var viewModel: DashboardViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        //toolbar.setLogo(R.drawable.logo)
-
-        fragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
-
-        if (fragment == null) {
-            RxPermissions(this)
-                    .request(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)
-                    .subscribe({ granted ->
-                        if (granted) {
-                            presenter.displayFeedsFragment()
-                        } else {
-                            presenter.displayPermissionFragment()
-                        }
-                    })
-        }
     }
 
-    override fun displayFeedsFragment() {
-        fragment = feedsFragment
-        ActivityUtils.addFragmentToActivity(supportFragmentManager, fragment as FeedsFragment, R.id.main_fragment_container)
+    override fun onStart() {
+        super.onStart()
+        RiveRx.observeView(this,viewModel)
     }
 
-    override fun displayPermissionFragment() {
-        fragment = permissionFragment
-        ActivityUtils.addFragmentToActivity(supportFragmentManager, fragment as PermissionFragment, R.id.main_fragment_container)
+    override fun localEvents(): Observable<DashboardEvent> {
+        return Observable.just("eventts").map { DashboardEvent("localEvents") }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.main, menu)
-        return super.onCreateOptionsMenu(menu)
+    override fun events(): Observable<DashboardEvent> {
+        return Observable.just("eventts").map { DashboardEvent("event") }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if(item?.itemId == R.id.item_logout){
-            FirebaseAuth.getInstance().signOut()
-        }
-        return super.onOptionsItemSelected(item)
-    }*/
+    override fun render(state: DashboardViewState) {
+        Log.d("Dashboard -- ",state.toString())
+    }
 }

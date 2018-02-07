@@ -1,1 +1,1 @@
-include ':app', ':geohash', ':riverx'
+include ':app', ':geohash'

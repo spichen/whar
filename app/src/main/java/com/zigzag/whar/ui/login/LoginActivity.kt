@@ -1,8 +1,5 @@
 package com.zigzag.whar.ui.login
 
-import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.CallSuper
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -19,31 +16,24 @@ import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import com.rxfuel.rxfuel.RxFuel
+import com.rxfuel.rxfuel.RxFuelView
 import com.zigzag.whar.common.helpers.ViewHelpers.whiteLongSnackBar
 import kotlinx.android.synthetic.main.page_phone_number.view.*
 import kotlinx.android.synthetic.main.page_code.view.*
-import android.view.inputmethod.InputMethodManager
-import com.salah.riverx.RiveRxView
 import java.util.*
-import com.salah.riverx.RiveRxDelegate
-import com.salah.riverx.RiveRxDelegateImpl
 import com.zigzag.whar.base.BaseActivity
-import com.zigzag.whar.ui.dashboard.DashboardActivity
 import com.zigzag.whar.ui.login.LoginDataModel.*
-import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.observables.ConnectableObservable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class LoginActivity :
         BaseActivity(),
-        RiveRxView<LoginEvent, LoginViewState>{
+        RxFuelView<LoginEvent, LoginViewState> {
 
     @Inject
     lateinit var viewModel : LoginViewModel
-
-    override val riveRx: RiveRxDelegate
-        get() =  RiveRxDelegateImpl(this, viewModel)
 
     companion object {
         const val PAGE_PHONE_NUMBER = 0
@@ -59,12 +49,12 @@ class LoginActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         initViews()
+        RxFuel.bind(this,viewModel)
     }
 
     @CallSuper
     override fun onStart() {
         super.onStart()
-        riveRx.onStart()
     }
 
     override fun render(state: LoginViewState) {
@@ -73,6 +63,9 @@ class LoginActivity :
         enableSubmitButton(!state.invalid)
         if(!state.inProgress){
             when {
+                state.success -> {
+                    //RxFuel.navigateTo(this, DashboardActivity::class, DashboardPresentationModels.DashboardViewState("from login activity"))
+                }
                 state.inputNumber -> displayPhoneNumberInputPage()
                 state.codeSent -> {
                     codePage?.tv_phone_number?.text = getString(R.string.tap_to_edit, state.lastPhoneNumber)
@@ -87,7 +80,6 @@ class LoginActivity :
                     if(state.codeResent) showSuccess(R.string.code_resent)
                     displayCodeInputPage()
                 }
-                state.success -> completeSubmitButtonAnimation()
             }
 
             if(state.errorMessage!=null) showError(state.errorMessage)
@@ -99,14 +91,7 @@ class LoginActivity :
                 Arrays.asList(
                         attemptLoginEvent(),
                         verifyCodeEvent(),
-                        resendCodeEvent()
-                )
-        )
-    }
-
-    override fun localEvents(): Observable<LoginEvent> {
-        return Observable.merge(
-                Arrays.asList(
+                        resendCodeEvent(),
                         editPhoneNumberEvent(),
                         validateCodeEvent(),
                         validatePhoneNumberEvent()
@@ -292,27 +277,25 @@ class LoginActivity :
     }
 
     internal inner class PhoneAuthSliderAdapter : PagerAdapter() {
-        override fun instantiateItem(collection: ViewGroup, position: Int): View? {
+
+        override fun isViewFromObject(view: View, `object`: Any) = view === `object`
+
+        override fun getCount() = 2
+
+        override fun instantiateItem(collection: ViewGroup, position: Int): View {
             when (position) {
                 PAGE_PHONE_NUMBER -> {
                     collection.addView(phoneNumberPage)
-                    return phoneNumberPage
+                    return phoneNumberPage!!
                 }
                 PAGE_CODE -> {
                     collection.addView(codePage)
-                    return codePage
+                    return codePage!!
                 }
             }
-            return phoneNumberPage
+            return phoneNumberPage!!
         }
 
-        override fun getCount(): Int {
-            return 2
-        }
-
-        override fun isViewFromObject(arg0: View?, arg1: Any): Boolean {
-            return arg0 === arg1
-        }
     }
 
     override fun onDestroy() {

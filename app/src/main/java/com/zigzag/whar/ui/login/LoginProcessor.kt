@@ -1,7 +1,7 @@
 package com.zigzag.whar.ui.login
 
 import com.google.firebase.auth.PhoneAuthCredential
-import com.salah.riverx.RiveRxProcessor
+import com.rxfuel.rxfuel.RxFuelProcessor
 import com.zigzag.whar.rx.firebase.RxFirebaseAuth
 import com.zigzag.whar.rx.firebase.VerificationData
 import io.reactivex.Observable
@@ -14,7 +14,7 @@ import com.zigzag.whar.ui.login.LoginDataModel.*
  * Created by salah on 26/1/18.
  */
 
-class LoginProcessor @Inject constructor(): RiveRxProcessor<LoginAction,LoginResult>() {
+class LoginProcessor @Inject constructor(): RxFuelProcessor<LoginAction, LoginResult>() {
 
     @Inject
     lateinit var rxFirebaseAuth : RxFirebaseAuth

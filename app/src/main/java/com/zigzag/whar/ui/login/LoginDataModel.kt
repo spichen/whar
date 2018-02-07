@@ -1,35 +1,50 @@
 package com.zigzag.whar.ui.login
 
+import android.support.v4.app.FragmentActivity
 import com.google.firebase.auth.PhoneAuthProvider
-import com.salah.riverx.RiveRxAction
-import com.salah.riverx.RiveRxEvent
-import com.salah.riverx.RiveRxResult
-import com.salah.riverx.RiveRxViewState
+import com.rxfuel.rxfuel.RxFuelAction
+import com.rxfuel.rxfuel.RxFuelEvent
+import com.rxfuel.rxfuel.RxFuelResult
+import com.rxfuel.rxfuel.RxFuelViewState
 import com.zigzag.whar.rx.firebase.VerificationData
+import kotlin.reflect.KClass
 
 /**
  * Created by salah on 25/1/18.
  */
 
 class LoginDataModel {
-    sealed class LoginAction : RiveRxAction {
+    sealed class LoginAction : RxFuelAction {
         object IdleAction : LoginAction()
         data class LoginAttemptAction(val phoneNumber: Number) : LoginAction()
         data class VerifyCodeAction(val code: Number?, val verificationId : String?) : LoginAction()
         data class ResendCode(val phoneNumber : Number, val token: PhoneAuthProvider.ForceResendingToken) : LoginAction()
     }
 
-    sealed class LoginEvent : RiveRxEvent {
-        object InitialEvent : LoginEvent()
-        data class AttemptLoginEvent(var number: Number) : LoginEvent()
-        data class VerifyCodeEvent(var code: Number?) : LoginEvent()
-        data class ValidatePhoneNumberEvent(var number: Number) : LoginEvent()
-        data class ValidateCodeEvent(var code: Number?) : LoginEvent()
-        object EditNumberEvent : LoginEvent()
-        object ResendCodeEvent : LoginEvent()
+    sealed class LoginEvent : RxFuelEvent {
+        object InitialEvent : LoginEvent() {
+            override val isLocal: Boolean
+                get() = true
+        }
+
+        data class AttemptLoginEvent(var number: Number, override val isLocal: Boolean = false) : LoginEvent()
+        data class VerifyCodeEvent(var code: Number?, override val isLocal: Boolean = false) : LoginEvent()
+        data class ValidatePhoneNumberEvent(var number: Number, override val isLocal: Boolean = true) : LoginEvent()
+        data class ValidateCodeEvent(var code: Number?, override val isLocal: Boolean = true) : LoginEvent()
+        object EditNumberEvent : LoginEvent() {
+            override val isLocal: Boolean
+                get() = true
+        }
+
+        object ResendCodeEvent : LoginEvent() {
+            override val isLocal: Boolean
+                get() = false
+        }
+
     }
 
-    sealed class LoginResult : RiveRxResult {
+    sealed class LoginResult : RxFuelResult {
+
         sealed class LoginAttemptResult : LoginResult() {
             object InFlight : LoginAttemptResult()
             object Success : LoginAttemptResult()
@@ -66,8 +81,8 @@ class LoginDataModel {
             var codeResent :  Boolean = false,
             var code : Number? = null,
             var errorMessage : String? = null,
-            var lastPhoneNumber : Number? = null
-    ) : RiveRxViewState {
+            var lastPhoneNumber : Number? = null, override var navigate: KClass<out FragmentActivity>? = null
+    ) : RxFuelViewState {
         companion object {
             fun idle(): LoginViewState {
                 return LoginViewState(
