@@ -1,52 +1,106 @@
 package com.zigzag.whar.ui.login
 
+import com.rxfuel.rxfuel.RxFuelAction
+import com.rxfuel.rxfuel.RxFuelResult
 import com.rxfuel.rxfuel.RxFuelViewModel
 import com.zigzag.whar.common.Utils
+import com.zigzag.whar.data.firebaseProcessor.FirebaseAction
+import com.zigzag.whar.data.firebaseProcessor.FirebaseResult
 import com.zigzag.whar.rx.firebase.VerificationData
-import com.zigzag.whar.ui.login.LoginDataModel.*
-import javax.inject.Inject
 
-/**
- * Created by salah on 23/1/18.
- */
+class LoginViewModel : RxFuelViewModel<LoginEvent, LoginViewState>() {
 
-class LoginViewModel @Inject constructor(loginProcessor : LoginProcessor) :
-        RxFuelViewModel<LoginEvent, LoginAction, LoginResult, LoginViewState>(loginProcessor) {
+    private var verificationData : VerificationData? = null
+    private var code : Number? = null
+    private var phoneNumber : Number? = null
 
-
-    override var idleState: LoginViewState
+    override var initialState: LoginViewState
         get() = LoginViewState.idle()
         set(value) {}
 
+    override fun eventToAction(event: LoginEvent) : RxFuelAction {
+        return when (event) {
+            is LoginEvent.AttemptLoginEvent -> {
+                phoneNumber = event.number
+                FirebaseAction.LoginAttemptAction(event.number)
+            }
+            is LoginEvent.VerifyCodeEvent -> FirebaseAction.VerifyCodeAction(code, verificationData?.verificationId)
 
-    override var initialEvent: LoginEvent?
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-        set(value) {}
-    override var isInitialEventLocal: Boolean
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-        set(value) {}
+            LoginEvent.ResendCodeEvent -> FirebaseAction.ResendCode(phoneNumber!!, verificationData?.token!!)
 
-    override fun resultToViewState(previousState: LoginViewState, result: LoginResult): LoginViewState {
+            else -> {
+                RxFuelAction.NO_ACTION
+            }
+        }
+    }
+
+    override fun eventToViewState(previousState: LoginViewState, event: LoginEvent): LoginViewState {
+        return when(event) {
+            is LoginEvent.ValidatePhoneNumberEvent -> when {
+                Utils.isValidMobile(event.number.toString()) -> previousState.copy(
+                        invalid = false,
+                        errorMessage = null,
+                        codeResent = false
+                )
+                else -> previousState.copy(
+                        invalid = true,
+                        errorMessage = null,
+                        codeResent = false
+                )
+            }
+
+            is LoginEvent.ValidateCodeEvent ->{
+                code = event.code
+                when {
+                    event.code.toString().length == 6 ->  previousState.copy(
+                            code = code,
+                            invalid = false,
+                            errorMessage = null,
+                            codeResent = false
+                    )
+                    else -> previousState.copy(
+                            code = code,
+                            invalid = true,
+                            errorMessage = null,
+                            codeResent = false
+                    )
+                }
+            }
+
+            LoginEvent.EditNumberEvent -> previousState.copy(
+                    code = null,
+                    inputNumber = true,
+                    codeSent = false,
+                    invalid = true,
+                    errorMessage = null,
+                    codeResent = false
+            )
+
+            else -> LoginViewState.idle()
+        }
+    }
+
+    override fun resultToViewState(previousState: LoginViewState, result: RxFuelResult): LoginViewState {
         return when (result) {
-            is LoginResult.LoginAttemptResult -> when (result) {
-                LoginResult.LoginAttemptResult.Success -> previousState.copy(
+            is FirebaseResult.LoginAttemptResult -> when (result) {
+                FirebaseResult.LoginAttemptResult.Success -> previousState.copy(
                         inProgress = false,
                         success = true,
                         errorMessage = null,
                         codeResent = false
                 )
-                is LoginResult.LoginAttemptResult.Failure -> previousState.copy(
+                is FirebaseResult.LoginAttemptResult.Failure -> previousState.copy(
                         inProgress = false,
                         success = false,
                         errorMessage = result.error.localizedMessage,
                         codeResent = false
                 )
-                LoginResult.LoginAttemptResult.InFlight -> previousState.copy(
+                FirebaseResult.LoginAttemptResult.InFlight -> previousState.copy(
                         inProgress = true,
                         errorMessage = null,
                         codeResent = false
                 )
-                is LoginResult.LoginAttemptResult.CodeSent -> {
+                is FirebaseResult.LoginAttemptResult.CodeSent -> {
                     verificationData = result.verificationData
                     previousState.copy(
                             invalid = true,
@@ -59,105 +113,37 @@ class LoginViewModel @Inject constructor(loginProcessor : LoginProcessor) :
                     )
                 }
             }
-            is LoginResult.VerifyCodeResult -> when (result) {
-                LoginResult.VerifyCodeResult.Success -> previousState.copy(
+            is FirebaseResult.VerifyCodeResult -> when (result) {
+                FirebaseResult.VerifyCodeResult.Success -> previousState.copy(
                         success = true,
                         inProgress = false,
                         errorMessage = null,
                         codeResent = false
                 )
-                is LoginResult.VerifyCodeResult.Failure -> previousState.copy(
+                is FirebaseResult.VerifyCodeResult.Failure -> previousState.copy(
                         inProgress = false,
                         code = null,
                         errorMessage = result.error.localizedMessage,
                         codeResent = false
                 )
-                LoginResult.VerifyCodeResult.InFlight -> previousState.copy(
+                FirebaseResult.VerifyCodeResult.InFlight -> previousState.copy(
                         inProgress = true,
                         errorMessage = null,
                         codeResent = false
                 )
             }
-            is LoginResult.ValidatePhoneNumberResult -> when (result) {
-                LoginResult.ValidatePhoneNumberResult.Valid -> previousState.copy(
-                        invalid = false,
-                        errorMessage = null,
-                        codeResent = false
-                )
-                LoginResult.ValidatePhoneNumberResult.Invalid -> previousState.copy(
-                        invalid = true,
-                        errorMessage = null,
-                        codeResent = false
-                )
-            }
-            is LoginResult.ValidateCodeResult -> when (result) {
-                LoginResult.ValidateCodeResult.Valid -> previousState.copy(
-                        code = code,
-                        invalid = false,
-                        errorMessage = null,
-                        codeResent = false
-                )
-                LoginResult.ValidateCodeResult.Invalid -> previousState.copy(
-                        code = code,
-                        invalid = true,
-                        errorMessage = null,
-                        codeResent = false
-                )
-            }
-            LoginDataModel.LoginResult.EditNumber -> previousState.copy(
-                    code = null,
-                    inputNumber = true,
-                    codeSent = false,
-                    invalid = true,
-                    errorMessage = null,
-                    codeResent = false
-            )
-            LoginDataModel.LoginResult.CodeResent -> previousState.copy(
+
+            FirebaseResult.CodeResent -> previousState.copy(
                     codeResent = true,
                     errorMessage = null
             )
+
+            else -> LoginViewState.idle()
         }
     }
 
-    private var verificationData : VerificationData? = null
-    private var code : Number? = null
-    private var phoneNumber : Number? = null
-
-
-    override fun eventToAction(event: LoginEvent): LoginAction {
-        return when (event) {
-            is LoginEvent.AttemptLoginEvent -> {
-                phoneNumber = event.number
-                LoginAction.LoginAttemptAction(event.number)
-            }
-            is LoginEvent.VerifyCodeEvent -> LoginAction.VerifyCodeAction(code, verificationData?.verificationId)
-            LoginDataModel.LoginEvent.ResendCodeEvent -> LoginAction.ResendCode(phoneNumber!!, verificationData?.token!!)
-            else -> {
-                LoginAction.IdleAction
-            }
-        }
-    }
-
-    override fun eventToResult(event: LoginEvent): LoginResult {
-        return when (event) {
-            LoginEvent.EditNumberEvent -> LoginResult.EditNumber
-            is LoginEvent.ValidatePhoneNumberEvent -> when {
-                Utils.isValidMobile(event.number.toString()) -> LoginResult.ValidatePhoneNumberResult.Valid
-                else -> {
-                    LoginResult.ValidatePhoneNumberResult.Invalid
-                }
-            }
-            is LoginEvent.ValidateCodeEvent ->{
-                code = event.code
-                when {
-                    event.code.toString().length == 6 -> LoginResult.ValidateCodeResult.Valid
-                    else -> {
-                        LoginResult.ValidateCodeResult.Invalid
-                    }
-                }
-            }
-            else -> LoginResult.EditNumber
-        }
+    override fun stateAfterNavigation(navigationState: LoginViewState): LoginViewState {
+        return navigationState.copy(navigate = null, inProgress = false)
     }
 
 }

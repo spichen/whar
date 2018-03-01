@@ -1,7 +1,6 @@
 package com.zigzag.whar.ui.login
 
 import android.os.Bundle
-import android.support.annotation.CallSuper
 import com.jakewharton.rxbinding2.widget.textChanges
 import com.zigzag.whar.R
 import com.zigzag.whar.common.Utils
@@ -13,6 +12,7 @@ import com.jakewharton.rxbinding2.widget.editorActions
 import io.reactivex.Observable
 import android.view.ViewGroup
 import android.support.v4.view.PagerAdapter
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -22,18 +22,14 @@ import com.zigzag.whar.common.helpers.ViewHelpers.whiteLongSnackBar
 import kotlinx.android.synthetic.main.page_phone_number.view.*
 import kotlinx.android.synthetic.main.page_code.view.*
 import java.util.*
-import com.zigzag.whar.base.BaseActivity
-import com.zigzag.whar.ui.login.LoginDataModel.*
 import io.reactivex.observables.ConnectableObservable
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 class LoginActivity :
-        BaseActivity(),
+        AppCompatActivity(),
         RxFuelView<LoginEvent, LoginViewState> {
 
-    @Inject
-    lateinit var viewModel : LoginViewModel
+    private val rxFuel = RxFuel(this)
 
     companion object {
         const val PAGE_PHONE_NUMBER = 0
@@ -49,12 +45,7 @@ class LoginActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         initViews()
-        RxFuel.bind(this,viewModel)
-    }
-
-    @CallSuper
-    override fun onStart() {
-        super.onStart()
+        rxFuel.bind(LoginViewModel())
     }
 
     override fun render(state: LoginViewState) {
@@ -301,6 +292,7 @@ class LoginActivity :
     override fun onDestroy() {
         super.onDestroy()
         btn_submit.dispose()
+        rxFuel.unbind()
     }
 
 }

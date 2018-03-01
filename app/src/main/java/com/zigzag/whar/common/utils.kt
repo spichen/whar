@@ -4,10 +4,6 @@ import android.content.Context
 import java.util.regex.Pattern
 import android.util.DisplayMetrics
 
-/**
- * Created by salah on 31/12/17.
- */
-
 object Utils {
     fun isValidMobile(phone: CharSequence): Boolean {
         return if (Pattern.matches("[0-9]+", phone)) {

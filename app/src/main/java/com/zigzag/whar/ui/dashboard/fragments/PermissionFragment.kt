@@ -15,13 +15,13 @@ import javax.inject.Inject
 
 @ActivityScoped
 class PermissionFragment @Inject constructor() : Fragment() {
+/*
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.fragment_permission, container, false)
     }
-/*
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

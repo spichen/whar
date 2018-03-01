@@ -2,18 +2,16 @@ package com.zigzag.whar.ui.dashboard
 
 import android.os.Bundle
 import android.util.Log
-import com.salah.rxfuel.RiveRx
-import com.salah.rxfuel.RiveRxView
+import com.rxfuel.rxfuel.RxFuel
+import com.rxfuel.rxfuel.RxFuelView
 import com.zigzag.whar.R
 import com.zigzag.whar.base.BaseActivity
 import com.zigzag.whar.ui.dashboard.DashboardPresentationModels.*
 import io.reactivex.Observable
-import javax.inject.Inject
 
-class DashboardActivity : BaseActivity(), RiveRxView<DashboardEvent, DashboardViewState> {
+class DashboardActivity : BaseActivity(), RxFuelView<DashboardEvent, DashboardViewState> {
 
-    @Inject
-    lateinit var viewModel: DashboardViewModel
+    private val rxFuel = RxFuel(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,11 +20,7 @@ class DashboardActivity : BaseActivity(), RiveRxView<DashboardEvent, DashboardVi
 
     override fun onStart() {
         super.onStart()
-        RiveRx.observeView(this,viewModel)
-    }
-
-    override fun localEvents(): Observable<DashboardEvent> {
-        return Observable.just("eventts").map { DashboardEvent("localEvents") }
+        rxFuel.bind(DashboardViewModel())
     }
 
     override fun events(): Observable<DashboardEvent> {
@@ -35,5 +29,10 @@ class DashboardActivity : BaseActivity(), RiveRxView<DashboardEvent, DashboardVi
 
     override fun render(state: DashboardViewState) {
         Log.d("Dashboard -- ",state.toString())
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        rxFuel.unbind()
     }
 }

@@ -1,15 +1,11 @@
 package com.zigzag.whar.customviews
 
-/**
- * Created by salah on 2/1/18.
- */
 import android.content.Context
 import android.support.v4.view.ViewPager
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.animation.DecelerateInterpolator
 import android.widget.Scroller
-import java.lang.reflect.Field
 
 class NonSwipeableViewPager : ViewPager {
 
